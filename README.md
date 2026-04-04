@@ -4,7 +4,7 @@ This project implements a **domain-level data validation layer** for the NICAI i
 The system ensures that incoming signals are validated, normalized, and prepared for downstream analytics and simulation systems.
 
 The validation layer processes signals **without enforcing decisions or controlling pipeline execution**.
-
+ 
 ---
 
 # Project Purpose
