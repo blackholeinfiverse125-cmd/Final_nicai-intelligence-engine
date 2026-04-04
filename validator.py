@@ -4,7 +4,7 @@ from utils import generate_trace_id
 
 def validate_signal(signal):
 
-    trace_id = generate_trace_id()
+    trace_id = generate_trace_id() 
 
     # Check missing fields
     for field in required_fields:
