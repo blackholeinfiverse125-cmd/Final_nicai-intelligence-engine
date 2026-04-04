@@ -4,7 +4,7 @@ from validator import validate_signal, validate_batch
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="NICAI Validation Layer",
+    title="NICAI Validation Layer", 
     description="Domain-level data integrity validation system",
     version="1.0"
 )
