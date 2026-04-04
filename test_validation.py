@@ -9,7 +9,7 @@ valid_signal = {
     "longitude": 72.87,
     "feature_type": "weather",
     "value": 34,
-    "dataset_id": "DS01"
+    "dataset_id": "DS01" 
 }
 
 print("VALID SIGNAL TEST")
