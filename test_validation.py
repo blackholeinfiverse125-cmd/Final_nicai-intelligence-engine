@@ -3,7 +3,7 @@ from validator import validate_signal, validate_batch
 # 1️⃣ Valid Signal Test (should return ALLOW)
 
 valid_signal = {
-    "signal_id": "SIG100",
+    "signal_id": "SIG100", 
     "timestamp": "2026-03-10T10:00:00Z",
     "latitude": 19.07,
     "longitude": 72.87,
