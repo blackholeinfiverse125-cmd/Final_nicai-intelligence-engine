@@ -1,4 +1,4 @@
-# NICAI Domain Data Integrity Layer – Review Packet
+# NICAI Observability & Contract Layer – Review Packet
 
 ---
 
@@ -6,85 +6,125 @@
 
 **File:** `main.py`
 
-This file acts as the entry point for the validation system and exposes the API endpoint:
+This file is the entry point of the NICAI validation system and exposes the API endpoint:
 
-```
 POST /validate
-```
 
-The endpoint receives raw signals from the **Samachar layer** and sends them to the validation logic.
+The endpoint receives structured signals from the upstream system (SUM-SCRIPT / Samachar) and forwards them to the validation logic.
 
-The API supports:
+Supported modes:
 
-* Single signal validation
-* Batch signal validation
+• Single signal validation  
+• Batch signal validation  
 
-The validation layer **only processes signals and returns validation results**.
+The system performs **data integrity validation only**.
 
-It does **not**:
+The validation layer **does NOT**:
 
-* enforce decisions
-* control pipeline execution
+• enforce governance decisions  
+• block pipeline execution  
+• modify downstream behavior  
+
+It only ensures that signals entering the intelligence system are **clean, structured, and traceable**.
 
 ---
 
 # 2. CORE FLOW (MAX 3 FILES)
 
-## main.py
-
-Handles the API interface for the validation system.
-
-Responsibilities:
-
-* receives incoming signals
-* determines single or batch input
-* sends signals to the validation layer
-* returns structured validation responses
-
----
-
 ## validator.py
 
-Contains the core validation logic.
+Contains the core signal validation logic.
 
 Responsibilities:
 
-* validate signal schema
-* check required fields
-* verify dataset registry
-* assign validation status (`ALLOW / FLAG / REJECT`)
-* generate trace identifiers
-* support batch-safe processing
+• validate signal schema  
+• check required fields  
+• verify dataset registry  
+• assign validation status (ALLOW / FLAG / REJECT)  
+• generate trace identifiers  
+• produce deterministic validation outputs  
 
-Each signal is processed **independently**.
-
----
-
-## dataset_registry.py
-
-Provides access to dataset metadata stored in the dataset registry.
-
-Responsibilities:
-
-* dataset lookup
-* dataset status verification
-* dataset trust score retrieval
-
-Dataset metadata is stored in:
-
-```
-datasets.json
-```
+Each signal is processed **independently**, ensuring safe batch processing.
 
 ---
 
-# 3. LIVE FLOW (REAL INPUT → OUTPUT)
+## bucket_emitter.py
 
-## Example Input Signal (Samachar)
+This module emits validation artifacts to the **Bucket Memory Layer**.
+
+For each validated signal, the system generates an artifact:
+
+```
+{
+ "trace_id": "...",
+ "signal_id": "...",
+ "status": "...",
+ "confidence_score": ...,
+ "reason": "...",
+ "timestamp": "...",
+ "layer": "NICAI_VALIDATION"
+}
+```
+
+Artifacts are written to:
+
+```
+bucket_artifacts.jsonl
+```
+
+Purpose:
+
+• provide traceable validation history  
+• ensure compatibility with memory systems  
+• enable system debugging and lineage tracking
+
+---
+
+## telemetry_emitter.py
+
+Responsible for **system observability and telemetry emission**.
+
+Telemetry generated per signal:
+
+```
+{
+ "trace_id": "...",
+ "dataset_id": "...",
+ "status": "...",
+ "confidence_score": ...,
+ "timestamp": "..."
+}
+```
+
+Metrics monitored:
+
+• total signals processed  
+• reject rate  
+• flag rate  
+• dataset mismatch rate  
+• confidence score distribution  
+
+Telemetry records are stored in:
+
+```
+telemetry.log
+```
+
+Purpose:
+
+• system monitoring  
+• validation performance tracking  
+• operational visibility
+
+---
+
+# 3. LIVE FLOW (INPUT → VALIDATION → BUCKET → TELEMETRY)
+
+### Example Input Signal (Upstream System)
 
 ```json
 {
- "signal_id": "SIG500",
+ "signal_id": "SIG910",
  "timestamp": "2026-03-10T10:00:00Z",
  "latitude": 19.07,
  "longitude": 72.87,
@@ -96,91 +136,102 @@ datasets.json
 
 ---
 
-## Processing Flow
+### System Processing Flow
 
 ```
-Samachar (Raw Structured Input)
-        ↓
-Validation Layer
-        ↓
+Upstream Input (SUM-SCRIPT / Samachar)
+              ↓
+NICAI Validation Layer
+              ↓
 Schema Validation
-        ↓
-Dataset Registry Check
-        ↓
-Validation Result Generated
+              ↓
+Dataset Registry Verification
+              ↓
+Validation Output Generated
+              ↓
+Bucket Artifact Emission
+              ↓
+Telemetry Metrics Emission
 ```
 
 ---
 
-## Example Output
+### Example Validation Output
 
 ```json
 {
- "signal_id": "SIG500",
+ "signal_id": "SIG910",
  "status": "ALLOW",
  "confidence_score": 0.92,
- "trace_id": "generated_uuid",
+ "trace_id": "615fd90b-999c-4d87-8815-45628ba88ff5",
  "reason": "valid signal"
 }
 ```
 
-The validation layer produces structured validation results **without stopping pipeline execution**.
+---
+
+### Example Bucket Artifact
+
+```
+{
+ "trace_id": "615fd90b-999c-4d87-8815-45628ba88ff5",
+ "signal_id": "SIG910",
+ "status": "ALLOW",
+ "confidence_score": 0.92,
+ "reason": "valid signal",
+ "timestamp": "2026-04-06T05:21:55",
+ "layer": "NICAI_VALIDATION"
+}
+```
+
+---
+
+### Example Telemetry Record
+
+```
+{
+ "trace_id": "615fd90b-999c-4d87-8815-45628ba88ff5",
+ "dataset_id": "DS01",
+ "status": "ALLOW",
+ "confidence_score": 0.92,
+ "timestamp": "2026-04-06T05:21:55"
+}
+```
 
 ---
 
 # 4. WHAT WAS BUILT
 
-A **domain-level data integrity validation layer** for NICAI that prepares signals for downstream analytics systems.
+The validation system was upgraded into a **fully observable domain-level data integrity layer**.
 
-### Implemented Capabilities
+### New Capabilities
 
-* schema validation for incoming signals
-* dataset registry verification
-* validation status classification (`ALLOW / FLAG / REJECT`)
-* trace identifier generation using UUID
-* batch-safe processing of signals
-* deterministic validation outputs for analytics systems
+• Bucket artifact emission (memory compatibility)  
+• Telemetry emission (system observability)  
+• strict validation output contract  
+• deterministic validation outputs  
+• structured schema enforcement  
+• compatibility with analytics systems
 
-The validation layer strictly separates:
+### New Modules Introduced
 
-* **validation logic**
-* **decision logic**
+```
+bucket_emitter.py
+telemetry_emitter.py
+schema.json
+```
 
----
-
-## System Guarantees
-
-The system does **not**:
-
-* enforce governance rules
-* stop pipeline execution
-* make decisions for downstream systems
-
-It ensures that signals passed to analytics systems are **clean, structured, and trusted**.
+The existing validation logic was **not modified**, ensuring system stability.
 
 ---
 
 # 5. FAILURE CASES HANDLED
 
-The validation layer safely handles multiple failure scenarios.
+The system safely handles multiple failure scenarios.
 
-### Handled Cases
+### Missing Field
 
-* missing required fields
-* malformed input signals
-* invalid schema structure
-* unregistered datasets
-* inactive datasets
-
----
-
-## Failure Behavior
-
-* system does **not crash**
-* batch processing continues
-* structured **REJECT responses** are returned
-
-### Example Failure Output
+Example failure output:
 
 ```json
 {
@@ -194,7 +245,49 @@ The validation layer safely handles multiple failure scenarios.
 
 ---
 
-# 6. PROOF
+### Dataset Not Registered
+
+Behavior:
+
+• signal rejected  
+• structured response returned  
+
+---
+
+### Dataset Inactive
+
+Behavior:
+
+• signal flagged  
+• reduced confidence score  
+
+---
+
+### Emitter Failure
+
+If Bucket or Telemetry emission fails:
+
+• validation result still returned  
+• failure logged separately  
+• system does not crash
+
+---
+
+# 6. DETERMINISM PROOF
+
+The validation system was tested using repeated executions of identical inputs.
+
+Observations:
+
+• validation outputs remained consistent  
+• schema validation produced identical results  
+• telemetry and bucket emissions were stable  
+
+Trace IDs are generated using UUID to ensure **global traceability across systems**.
+
+---
+
+# 7. PROOF (TESTING)
 
 Validation testing was performed using **two methods**.
 
@@ -202,33 +295,41 @@ Validation testing was performed using **two methods**.
 
 ## Script Testing
 
-Testing file:
+Test file:
 
 ```
 test_validation.py
 ```
 
-Command used:
+Command executed:
 
 ```
 python test_validation.py
 ```
 
-### Test Scenarios
+Test scenarios:
 
-* valid signal validation
-* inactive dataset validation
-* missing field validation
-* mixed batch validation
-* malformed input validation
-
-All outputs were **deterministic and consistent**.
+• valid signal validation  
+• inactive dataset validation  
+• missing field validation  
+• malformed input validation  
+• batch signal validation
 
 ---
 
 ## API Testing
 
-The validation API was tested using **FastAPI Swagger UI**.
+Server started using:
+
+```
+uvicorn main:app --reload
+```
+
+API documentation:
+
+```
+http://127.0.0.1:8000/docs
+```
 
 Endpoint tested:
 
@@ -236,81 +337,20 @@ Endpoint tested:
 POST /validate
 ```
 
-### Test Scenarios
-
-* Single signal → `ALLOW`
-* Inactive dataset signal → `FLAG`
-* Missing field signal → `REJECT`
-* Batch signals → mixed validation results
-
-All signals were processed **independently without stopping batch execution**.
-
 ---
 
-# 7. HOW TO RUN THE SYSTEM
+### API Testing Python Script
 
-## Step 1 — Install Dependencies
+Example API testing code:
 
-```
-pip install fastapi uvicorn
-```
+```python
+import requests
 
----
+url = "http://127.0.0.1:8000/validate"
 
-## Step 2 — Run Validation Test Script
-
-```
-python test_validation.py
-```
-
-This script executes multiple validation scenarios and prints validation outputs.
-
----
-
-## Step 3 — Start the Validation API Server
-
-```
-uvicorn main:app --reload
-```
-
----
-
-## Step 4 — Open API Documentation
-
-Open in browser:
-
-```
-http://127.0.0.1:8000/docs
-```
-
----
-
-## Step 5 — Test the Validation Endpoint
-
-Use the **POST /validate** endpoint.
-
-### Example Single Signal Input
-
-```json
-{
- "signal_id": "SIG500",
- "timestamp": "2026-03-10T10:00:00Z",
- "latitude": 19.07,
- "longitude": 72.87,
- "feature_type": "weather",
- "value": 34,
- "dataset_id": "DS01"
-}
-```
-
----
-
-### Example Batch Input
-
-```json
-[
+payload = [
  {
-  "signal_id": "SIG500",
+  "signal_id": "SIG910",
   "timestamp": "2026-03-10T10:00:00Z",
   "latitude": 19.07,
   "longitude": 72.87,
@@ -319,7 +359,7 @@ Use the **POST /validate** endpoint.
   "dataset_id": "DS01"
  },
  {
-  "signal_id": "SIG501",
+  "signal_id": "SIG911",
   "timestamp": "2026-03-10T10:05:00Z",
   "latitude": 18.52,
   "longitude": 73.85,
@@ -328,36 +368,71 @@ Use the **POST /validate** endpoint.
   "dataset_id": "DS02"
  }
 ]
+
+response = requests.post(url, json=payload)
+
+print(response.json())
+```
+
+Expected output:
+
+```
+{
+ "results": [
+  {
+   "signal_id": "SIG910",
+   "status": "ALLOW",
+   "confidence_score": 0.92,
+   "trace_id": "...",
+   "reason": "valid signal"
+  },
+  {
+   "signal_id": "SIG911",
+   "status": "FLAG",
+   "confidence_score": 0.45,
+   "trace_id": "...",
+   "reason": "dataset inactive"
+  }
+ ]
+}
 ```
 
 ---
 
-# SYSTEM ARCHITECTURE POSITION
+# 8. SYSTEM ARCHITECTURE POSITION
 
 ```
-Samachar (Raw Structured Signals)
-        ↓
-Validation Layer (This Implementation)
-        ↓
-Sanskar (Analytics Layer)
-        ↓
-Mitra (Decision Layer)
-        ↓
-UI and Simulation Systems
+SUM-SCRIPT / Samachar (Structured Input)
+              ↓
+NICAI Validation Layer
+              ↓
+Bucket (Memory Layer)
+              ↓
+InsightFlow (Observability)
+              ↓
+Sanskar (Analytics)
+              ↓
+Chayan (Agent Selection)
+              ↓
+Sūtradhāra (Contract Builder)
+              ↓
+RAJYA / SAARTHI Systems
 ```
 
-The validation layer acts as a **domain boundary** that prepares trusted signals for analytics systems.
+NICAI now functions as an **observable domain data integrity layer ready for TANTRA integration**.
 
 ---
 
 # SUMMARY
 
-This implementation converts the signal validation component into a **domain-level data integrity layer aligned with the NICAI architecture**.
+This implementation upgrades the NICAI validation system into a **fully observable data integrity layer**.
 
 The system guarantees:
 
-* schema-safe validation
-* batch-safe signal processing
-* deterministic validation results
-* trusted signals for analytics systems
-* clear separation between validation and decision logic
+• schema-safe validation  
+• deterministic outputs  
+• traceable validation artifacts  
+• telemetry-based observability  
+• compatibility with analytics and intelligence systems  
+
+The system is now **TANTRA-ready and SVACS-compatible**.
