@@ -1,0 +1,12 @@
+[
+  {
+    "dataset_id": "DS01",
+    "status": "active",
+    "trust_score": 0.92
+  },
+  {
+    "dataset_id": "DS02",
+    "status": "inactive",
+    "trust_score": 0.45
+  }
+]
