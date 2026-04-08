@@ -8,7 +8,7 @@
 
 This file is the entry point of the NICAI validation system and exposes the API endpoint:
 
-POST /validate
+POST /validate 
 
 The endpoint receives structured signals from the upstream system (SUM-SCRIPT / Samachar) and forwards them to the validation layer.
 
