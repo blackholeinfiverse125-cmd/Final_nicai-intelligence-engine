@@ -2,43 +2,56 @@
 
 ---
 
-# 1. ENTRY POINT
+## 1. Entry Point
 
-File: `main.py`
+**File:** `main.py`
 
-This file exposes the primary API endpoint that runs the full NICAI pipeline.
+This file exposes the main API endpoint responsible for executing the full NICAI pipeline.
 
+```
 POST /pipeline
+```
 
-The endpoint receives structured signals from the upstream system (Samachar) and executes the complete deterministic pipeline.
+The endpoint receives structured signals from the upstream system (**Samachar**) and executes the deterministic pipeline.
 
-Pipeline Flow:
+### Pipeline Flow
 
-Input Signal → Validation Layer → Analytics Stub → Decision Stub → Final Output
+```
+Input Signal
+     ↓
+NICAI Validation Layer
+     ↓
+Sanskar Analytics Stub
+     ↓
+Decision Engine Stub
+     ↓
+Final Output
+```
 
 System guarantees:
 
-• validation logic remains unchanged  
-• deterministic processing preserved  
-• no intelligence logic added inside validation  
-• downstream layers implemented as modular stubs  
+- Validation logic remains unchanged
+- Deterministic processing preserved
+- No intelligence logic added inside validation
+- Downstream layers implemented as modular stubs
 
-The endpoint returns a structured multi-layer response.
+Example API response:
 
-Example response structure:
-
+```json
 {
- "validation": {...},
- "analytics": {...},
- "decision": {...}
+  "validation": {...},
+  "analytics": {...},
+  "decision": {...}
 }
+```
 
 ---
 
-# 2. PIPELINE ARCHITECTURE
+## 2. Pipeline Architecture
 
-The integrated pipeline consists of three logical layers.
+The system follows a layered pipeline architecture.
 
+```
 Samachar (Input Signals)
         ↓
 NICAI Validation Layer
@@ -48,349 +61,407 @@ Sanskar Analytics Stub
 Decision Engine Stub
         ↓
 Final Structured Output
+```
 
-Each layer performs a clearly defined responsibility while maintaining strict architectural separation.
+Each layer performs a clearly defined responsibility.
 
 ---
 
-# 3. VALIDATION LAYER
+## 3. Validation Layer
 
-File: `validator.py`
+**File:** `validator.py`
 
-Responsibilities:
+### Responsibilities
 
-• schema validation of incoming signals  
-• verification of required fields  
-• dataset registry validation  
-• deterministic trace_id generation using SHA256  
-• validation status assignment  
+- schema validation of incoming signals
+- verification of required fields
+- dataset registry validation
+- deterministic `trace_id` generation
+- validation status assignment
 
-Validation statuses:
+### Validation Status Types
 
-ALLOW  
-FLAG  
-REJECT  
+```
+ALLOW
+FLAG
+REJECT
+```
 
-Validation output format:
+### Validation Output Format
 
+```json
 {
- "signal_id": "...",
- "status": "...",
- "confidence_score": ...,
- "trace_id": "...",
- "reason": "..."
+  "signal_id": "...",
+  "status": "...",
+  "confidence_score": ...,
+  "trace_id": "...",
+  "reason": "..."
 }
+```
 
-Key guarantees:
+### Guarantees
 
-• deterministic outputs  
-• batch-safe processing  
-• independent signal validation  
+- deterministic outputs
+- batch-safe processing
+- independent signal validation
 
 ---
 
-# 4. ANALYTICS STUB (SANSKAR SIMULATION)
+## 4. Analytics Stub (Sanskar Simulation)
 
-File: `sanskar_stub.py`
+**File:** `sanskar_stub.py`
 
-This module simulates the analytics layer.
+This module simulates the **Sanskar analytics layer**.
 
-Behavior:
+### Behavior
 
-• accepts validated signals (ALLOW or FLAG)  
-• computes deterministic anomaly score  
-• assigns signal priority  
+- accepts validated signals (ALLOW / FLAG)
+- computes deterministic anomaly score
+- assigns signal priority
 
-No machine learning or randomness is used.
+No ML and no randomness is used.
 
-Analytics output format:
+### Analytics Output Format
 
+```json
 {
- "signal_id": "...",
- "status": "...",
- "confidence_score": ...,
- "anomaly_score": ...,
- "priority": "LOW / MEDIUM / HIGH"
+  "signal_id": "...",
+  "status": "...",
+  "confidence_score": ...,
+  "anomaly_score": ...,
+  "priority": "LOW | MEDIUM | HIGH"
 }
+```
 
-Example rule behavior:
+### Example Rule Behavior
 
-LOW anomaly → LOW priority  
-MEDIUM anomaly → MEDIUM priority  
-HIGH anomaly → HIGH priority  
-
-This prepares signals for the decision layer.
+| Anomaly Score | Priority |
+|---------------|----------|
+| Low           | LOW      |
+| Medium        | MEDIUM   |
+| High          | HIGH     |
 
 ---
 
-# 5. DECISION ENGINE STUB
+## 5. Decision Engine Stub
 
-File: `decision_engine_stub.py`
+**File:** `decision_engine_stub.py`
 
 This module converts analytics results into deterministic decisions.
 
-Decision rules:
+### Decision Rules
 
-HIGH anomaly → ALERT  
-MEDIUM anomaly → REVIEW  
-LOW anomaly → PROCEED  
+```
+HIGH anomaly → ALERT
+MEDIUM anomaly → REVIEW
+LOW anomaly → PROCEED
+```
 
-Decision output format:
+### Decision Output Format
 
+```json
 {
- "decision": "...",
- "risk_level": "...",
- "reason": "Decision based on anomaly score"
+  "decision": "...",
+  "risk_level": "...",
+  "reason": "Decision based on anomaly score"
 }
+```
 
-This layer simulates the decision intelligence layer while remaining deterministic.
+This simulates the downstream intelligence decision system.
 
 ---
 
-# 6. FINAL PIPELINE RESPONSE STRUCTURE
+## 6. Final Pipeline Response Structure
 
-API response format:
+The API returns a multi-layer structured response.
 
+```json
 {
- "validation": {
-   "signal_id": "...",
-   "status": "...",
-   "confidence_score": ...,
-   "trace_id": "...",
-   "reason": "..."
- },
-
- "analytics": {
-   "signal_id": "...",
-   "status": "...",
-   "confidence_score": ...,
-   "anomaly_score": ...,
-   "priority": "..."
- },
-
- "decision": {
-   "decision": "...",
-   "risk_level": "...",
-   "reason": "..."
- }
+  "validation": {
+    "signal_id": "...",
+    "status": "...",
+    "confidence_score": ...,
+    "trace_id": "...",
+    "reason": "..."
+  },
+  "analytics": {
+    "signal_id": "...",
+    "status": "...",
+    "confidence_score": ...,
+    "anomaly_score": ...,
+    "priority": "..."
+  },
+  "decision": {
+    "decision": "...",
+    "risk_level": "...",
+    "reason": "..."
+  }
 }
+```
 
-If validation result is REJECT, the pipeline stops and only validation output is returned.
+### Special Case
+
+If validation result is **REJECT**, the pipeline stops and only validation output is returned.
 
 ---
 
-# 7. BATCH PROCESSING GUARANTEE
+## 7. Batch Processing Guarantee
 
-The validation system supports batch signal processing.
+The system supports batch signal processing.
 
-To ensure deterministic outputs, signals are sorted before validation.
+To maintain deterministic behavior, signals are sorted before validation.
 
-Example:
-
+```python
 sorted(signals, key=lambda x: x["signal_id"])
+```
 
-This guarantees:
+### Guarantees
 
-• stable ordering  
-• reproducible outputs  
-• deterministic pipeline behavior  
+- stable ordering
+- reproducible outputs
+- deterministic pipeline behavior
 
 ---
 
-# 8. OBSERVABILITY SUPPORT
+## 8. Observability Support
 
-The system includes observability support through two components.
+The system includes observability through two components.
 
-Bucket (Memory Layer)
+### Bucket (Memory Layer)
 
-• stores validation artifacts  
-• maintains trace continuity  
-• supports system debugging  
+Stores validation artifacts.
 
-InsightFlow (Telemetry)
+Example storage file:
 
-• records telemetry logs  
-• tracks validation metrics  
-• provides operational visibility  
-
-Artifacts are stored in:
-
+```
 bucket_artifacts.jsonl
-
-Telemetry logs stored in:
-
-telemetry.log
-
----
-
-# 9. DEMO MODE EXECUTION
-
-File: `run_demo.py`
-
-This script simulates signals and runs the full pipeline.
+```
 
 Purpose:
 
-• demonstrate end-to-end system flow  
-• validate layer integration  
-• produce clean console outputs for demonstration  
+- trace continuity
+- validation history
+- debugging support
 
-Command:
+---
 
+### InsightFlow (Telemetry)
+
+Stores telemetry logs.
+
+Example storage file:
+
+```
+telemetry.log
+```
+
+Purpose:
+
+- system monitoring
+- operational visibility
+- validation metrics tracking
+
+---
+
+## 9. Demo Mode Execution
+
+**File:** `run_demo.py`
+
+This script simulates signals and runs the full pipeline.
+
+### Purpose
+
+- demonstrate end-to-end system flow
+- validate pipeline integration
+- generate clean console outputs
+
+### Command
+
+```bash
 python run_demo.py
+```
 
-Example output:
+### Example Output
 
+```
 INPUT: {...}
 
 VALIDATION:
 {
- "signal_id": "SIG100",
- "status": "ALLOW"
+  "signal_id": "SIG100",
+  "status": "ALLOW"
 }
 
 ANALYTICS:
 {
- "anomaly_score": 0.08,
- "priority": "LOW"
+  "anomaly_score": 0.08,
+  "priority": "LOW"
 }
 
 DECISION:
 {
- "decision": "PROCEED",
- "risk_level": "LOW"
+  "decision": "PROCEED",
+  "risk_level": "LOW"
 }
+```
 
 ---
 
-# 10. API DEMONSTRATION
+## 10. API Demonstration
 
-Server start command:
+### Start Server
 
+```bash
 uvicorn main:app --reload
+```
 
-API documentation:
+### API Documentation
 
+```
 http://127.0.0.1:8000/docs
+```
 
-Endpoint:
+### Endpoint
 
+```
 POST /pipeline
+```
 
-Example input:
+### Example Input
 
+```json
 {
- "signal_id": "SIG920",
- "timestamp": "2026-03-10T10:00:00Z",
- "latitude": 19.07,
- "longitude": 72.87,
- "feature_type": "weather",
- "value": 30,
- "dataset_id": "DS01"
+  "signal_id": "SIG920",
+  "timestamp": "2026-03-10T10:00:00Z",
+  "latitude": 19.07,
+  "longitude": 72.87,
+  "feature_type": "weather",
+  "value": 30,
+  "dataset_id": "DS01"
 }
+```
 
-Example response:
+### Example Output
 
+```json
 {
- "validation": {...},
- "analytics": {...},
- "decision": {...}
+  "validation": {...},
+  "analytics": {...},
+  "decision": {...}
 }
+```
 
 ---
 
-# 11. FAILURE HANDLING
+## 11. Failure Handling
 
 The pipeline safely handles multiple failure scenarios.
 
-Missing Field:
+### Missing Field
 
-→ validation returns REJECT  
-→ pipeline stops safely  
+Validation returns:
 
-Inactive Dataset:
+```
+REJECT
+```
 
-→ validation returns FLAG  
-→ analytics and decision still executed  
+Pipeline stops safely.
 
-Emitter Failure:
+### Inactive Dataset
 
-→ validation output returned  
-→ system continues running  
+Validation returns:
 
-This ensures production-safe pipeline behavior.
+```
+FLAG
+```
+
+Analytics and decision layers still execute.
+
+### Emitter Failure
+
+- validation result still returned
+- system does not crash
 
 ---
 
-# 12. DETERMINISM GUARANTEE
+## 12. Determinism Guarantee
 
 The system ensures deterministic behavior.
 
-Measures implemented:
+### Measures Implemented
 
-• SHA256-based trace_id generation  
-• rule-based analytics scoring  
-• rule-based decision logic  
-• stable batch ordering  
+- SHA256-based `trace_id`
+- rule-based analytics scoring
+- rule-based decision logic
+- sorted batch processing
 
-Result:
+### Result
 
-Same input → Same validation → Same analytics → Same decision
-
-This guarantees reproducible outputs.
+```
+Same Input
+   ↓
+Same Validation
+   ↓
+Same Analytics
+   ↓
+Same Decision
+```
 
 ---
 
-# 13. PROJECT STRUCTURE
+## 13. Project Structure
 
+```
 nicai_validation_layer
-
-main.py  
-validator.py  
-dataset_registry.py  
-schemas.py  
-utils.py  
-
-sanskar_stub.py  
-decision_engine_stub.py  
-run_demo.py  
-
-bucket_emitter.py  
-telemetry_emitter.py  
-
-schema.json  
-datasets.json  
-sample_signals.json  
-
-test_validation.py  
-integration_test.py  
-
-bucket_artifacts.jsonl  
-telemetry.log  
-
-README.md  
-REVIEW_PACKET.md  
+│
+├── main.py
+├── validator.py
+├── dataset_registry.py
+├── schemas.py
+├── utils.py
+│
+├── sanskar_stub.py
+├── decision_engine_stub.py
+├── run_demo.py
+│
+├── bucket_emitter.py
+├── telemetry_emitter.py
+│
+├── schema.json
+├── datasets.json
+├── sample_signals.json
+│
+├── test_validation.py
+├── integration_test.py
+│
+├── bucket_artifacts.jsonl
+├── telemetry.log
+│
+├── README.md
+└── REVIEW_PACKET.md
+```
 
 ---
 
-# 14. WHAT WAS BUILT IN THIS TASK
+## 14. What Was Built In This Task
 
-The NICAI validation system was extended into a fully integrated pipeline demonstration system.
+The NICAI validation module was extended into a **fully integrated deterministic pipeline demonstration system**.
 
 New capabilities:
 
-• analytics stub layer (Sanskar simulation)  
-• decision engine stub layer  
-• full pipeline API endpoint  
-• deterministic multi-layer response  
-• demo execution script  
+- analytics stub layer
+- decision engine stub layer
+- full pipeline API endpoint
+- deterministic multi-layer API response
+- demo pipeline execution script
 
-The core validation logic was not modified.
+The **core validation logic remained unchanged**.
 
 ---
 
-# 15. SYSTEM POSITION IN ARCHITECTURE
+## 15. System Position in Architecture
 
+```
 Samachar (Signal Input)
         ↓
 NICAI Validation Layer
@@ -400,23 +471,24 @@ Sanskar Analytics Layer
 Decision Engine
         ↓
 Downstream Systems
+```
 
-NICAI now functions as a validated gateway for downstream intelligence systems.
+NICAI now acts as a **validated gateway for downstream intelligence systems**.
 
 ---
 
-# SUMMARY
+## Summary
 
-This task converts the NICAI validation module into a fully connected deterministic pipeline demonstration system.
+This task converts the NICAI validation module into a **fully connected deterministic pipeline system**.
 
 The system now provides:
 
-• deterministic signal validation  
-• analytics simulation layer  
-• decision simulation layer  
-• full pipeline execution  
-• clean API demonstration  
-• production-safe failure handling  
-• observability and telemetry support  
+- deterministic signal validation
+- analytics simulation layer
+- decision simulation layer
+- full pipeline execution
+- structured API output
+- production-safe failure handling
+- observability support
 
-The pipeline is now integration-ready for downstream intelligence systems.
+The system is now **integration-ready for downstream intelligence systems**.
