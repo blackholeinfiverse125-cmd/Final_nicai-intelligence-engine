@@ -1,166 +1,243 @@
-# NICAI Deterministic Validation & Observability Layer
+# NICAI End-to-End Validation & Intelligence Pipeline
 
-This project implements the **NICAI Domain Data Integrity, Observability, and Deterministic Validation Layer**.
+## Overview
 
-The system validates incoming signals and ensures that they are **clean, traceable, deterministic, and ready for downstream intelligence systems**.
+This project implements the **NICAI Domain Data Integrity Layer integrated with an end-to-end pipeline simulation**.
 
-The validation layer performs **data integrity validation only** and does **not enforce decisions or block pipeline execution**.
+The system validates incoming signals and passes them through a deterministic pipeline that simulates downstream intelligence layers.
+
+Pipeline Flow:
+
+```
+Samachar (Input Signals)
+        ↓
+NICAI Validation Layer
+        ↓
+Sanskar Analytics Stub
+        ↓
+Decision Engine Stub
+        ↓
+Final Structured Output
+```
+
+The goal of this project is to demonstrate how **validated signals flow through an intelligence pipeline while maintaining deterministic behavior, observability, and strict architectural separation.**
 
 ---
 
-# Project Objective 
+# System Responsibilities
 
-The objective of this system is to create a **deterministic and contract-safe validation boundary inside the NICAI intelligence pipeline**.
+The NICAI layer performs the following responsibilities:
 
-The system guarantees that:
+- validates incoming signal schema
+- verifies dataset registry status
+- generates deterministic trace identifiers
+- emits validation artifacts to Bucket
+- emits telemetry logs for observability
+- forwards valid signals to analytics layer
+- produces structured multi-layer outputs
 
-• incoming signals follow a strict schema  
-• dataset registry validation is enforced  
-• trace identifiers are deterministic  
-• validation artifacts are stored for memory systems  
-• telemetry metrics are emitted for observability  
-• downstream systems receive contract-safe outputs  
+Important architectural rule:
 
-The validation layer prepares **trusted signals for analytics and intelligence systems**.
+**Validation logic is never mixed with intelligence or decision logic.**
+
+---
+
+# Key Features
+
+• deterministic signal validation  
+• strict schema enforcement  
+• SHA256 based trace_id generation  
+• batch-safe signal processing  
+• analytics simulation layer (Sanskar Stub)  
+• rule-based decision simulation layer  
+• structured API pipeline response  
+• observability support (Bucket + Telemetry)  
+• demo pipeline execution script  
 
 ---
 
 # System Architecture
 
 ```
-SUM-SCRIPT / Samachar (Structured Input)
-              ↓
-NICAI Validation Layer (This System)
-              ↓
-Bucket (Memory Layer)
-              ↓
-InsightFlow (Observability)
-              ↓
-Sanskar (Analytics Layer)
-              ↓
-Chayan (Agent Selection)
-              ↓
-Sūtradhāra (Contract Builder)
-              ↓
-RAJYA / SAARTHI Systems
+Samachar (Input Signals)
+        ↓
+NICAI Validation Layer
+        ↓
+Bucket (Artifact Storage)
+        ↓
+InsightFlow (Telemetry Logs)
+        ↓
+Sanskar Analytics Stub
+        ↓
+Decision Engine Stub
+        ↓
+Pipeline Output
 ```
 
-The NICAI layer acts as a **domain data integrity boundary** for the intelligence pipeline.
+NICAI acts as the **gateway ensuring only trusted signals enter the intelligence pipeline.**
 
 ---
 
-# Key Features
+# Validation Layer
 
-• domain-level signal validation  
-• deterministic trace_id generation (SHA256)  
-• strict schema contract enforcement  
-• dataset registry verification  
-• batch-safe signal processing  
-• Bucket artifact emission (memory layer)  
-• telemetry emission (observability)  
-• Sanskar integration interface  
-• FastAPI validation API  
+File: `validator.py`
 
----
+Responsibilities:
 
-# Deterministic Trace ID
+- validate required signal fields
+- verify dataset registry
+- assign validation status
+- generate deterministic trace_id
+- produce structured validation output
 
-The system generates **deterministic trace IDs** to ensure reproducible outputs.
-
-Trace ID generation rule:
+Validation statuses:
 
 ```
-trace_id = SHA256(signal_id + timestamp + dataset_id)
+ALLOW
+FLAG
+REJECT
 ```
 
-This guarantees:
+Validation Output Format:
 
-• same input → same trace_id  
-• no randomness  
-• full system determinism  
-
-Example:
-
-```
-trace_id: 80b8678cd19b352d6f374d972912dca0d5af0fa2ffd4a7f09d68b56d65db23a9
-```
-
----
-
-# Validation Input Contract
-
-The system enforces a strict schema for incoming signals.
-
-### Required Fields
-
-• `signal_id`  
-• `timestamp`  
-• `latitude`  
-• `longitude`  
-• `feature_type`  
-• `value`  
-• `dataset_id`  
-
-Malformed or incomplete signals are **rejected safely**.
-
----
-
-# Validation Output Contract
-
-Each validated signal produces a deterministic output:
-
-```
+```json
 {
  "signal_id": "...",
- "status": "ALLOW / FLAG / REJECT",
+ "status": "...",
  "confidence_score": ...,
  "trace_id": "...",
  "reason": "..."
 }
 ```
 
-Rules:
+---
 
-• no additional fields  
-• no missing fields  
-• strict schema enforcement  
+# Analytics Layer (Sanskar Stub)
 
-This ensures **downstream compatibility**.
+File: `sanskar_stub.py`
+
+This module simulates the **analytics layer**.
+
+Behavior:
+
+- accepts validated signals
+- calculates anomaly score
+- assigns signal priority
+
+Analytics Output Format:
+
+```json
+{
+ "signal_id": "...",
+ "status": "...",
+ "confidence_score": ...,
+ "anomaly_score": ...,
+ "priority": "LOW | MEDIUM | HIGH"
+}
+```
+
+This layer prepares signals for decision processing.
 
 ---
 
-# Batch Processing
+# Decision Engine Stub
 
-The validation API supports **batch signal validation**.
+File: `decision_engine_stub.py`
 
-### Behavior
+This module simulates the decision layer.
 
-• each signal processed independently  
-• REJECT signals do not stop batch execution  
-• results returned for all signals  
-• output order is deterministic (sorted by signal_id)
-
-Example response:
+Decision rules:
 
 ```
+HIGH anomaly → ALERT
+MEDIUM anomaly → REVIEW
+LOW anomaly → PROCEED
+```
+
+Decision Output Format:
+
+```json
 {
- "results": [
-  { "signal_id": "SIG100", "status": "ALLOW" },
-  { "signal_id": "SIG101", "status": "FLAG" },
-  { "signal_id": "SIG102", "status": "REJECT" }
- ]
+ "decision": "...",
+ "risk_level": "...",
+ "reason": "Decision based on anomaly score"
 }
 ```
 
 ---
 
-# Bucket Artifact Emission
+# API Pipeline Response
 
-For each validated signal, the system emits an artifact to the **Bucket memory layer**.
+The API returns a structured multi-layer response.
 
-Example artifact:
+```json
+{
+ "validation": {
+   "signal_id": "...",
+   "status": "...",
+   "confidence_score": ...,
+   "trace_id": "...",
+   "reason": "..."
+ },
+
+ "analytics": {
+   "signal_id": "...",
+   "status": "...",
+   "confidence_score": ...,
+   "anomaly_score": ...,
+   "priority": "..."
+ },
+
+ "decision": {
+   "decision": "...",
+   "risk_level": "...",
+   "reason": "..."
+ }
+}
+```
+
+Special case:
+
+If validation result is **REJECT**, only validation output is returned.
+
+---
+
+# Determinism Guarantee
+
+The system guarantees deterministic outputs.
+
+Measures implemented:
+
+- SHA256 based trace_id generation
+- rule-based analytics scoring
+- rule-based decision engine
+- sorted batch processing
+
+Result:
 
 ```
+Same Input → Same Validation → Same Analytics → Same Decision
+```
+
+---
+
+# Observability
+
+The system supports observability through two mechanisms.
+
+## Bucket (Memory Layer)
+
+Stores validation artifacts.
+
+Example storage file:
+
+```
+bucket_artifacts.jsonl
+```
+
+Artifact Example:
+
+```json
 {
  "trace_id": "...",
  "signal_id": "...",
@@ -172,27 +249,21 @@ Example artifact:
 }
 ```
 
-Artifacts are stored in:
-
-```
-bucket_artifacts.jsonl
-```
-
-Purpose:
-
-• signal traceability  
-• lineage tracking  
-• memory layer compatibility  
-
 ---
 
-# Telemetry & Observability
+## Telemetry Logs (InsightFlow)
 
-The system emits telemetry records for **system monitoring and observability**.
+Telemetry logs capture pipeline metrics.
 
-Telemetry format:
+Example storage file:
 
 ```
+telemetry.log
+```
+
+Telemetry Record Example:
+
+```json
 {
  "trace_id": "...",
  "dataset_id": "...",
@@ -202,48 +273,126 @@ Telemetry format:
 }
 ```
 
-Telemetry records are stored in:
+---
+
+# Demo Mode
+
+File: `run_demo.py`
+
+This script simulates signals and executes the full pipeline.
+
+Command:
+
+```bash
+python run_demo.py
+```
+
+Example Console Output:
 
 ```
-telemetry.log
+INPUT SIGNAL
+
+VALIDATION RESULT
+ALLOW
+
+ANALYTICS RESULT
+LOW priority signal
+
+DECISION
+PROCEED
 ```
 
-Metrics tracked include:
-
-• total signals processed  
-• reject rate  
-• flag rate  
-• dataset mismatch rate  
-• confidence score distribution  
+This demonstrates the **complete pipeline execution**.
 
 ---
 
-# Sanskar Integration Interface
+# Running the Project
 
-The system exposes a **clean interface for the Sanskar intelligence layer**.
-
-Function:
+## 1 Install Dependencies
 
 ```
-get_validated_signals(signals)
+pip install fastapi uvicorn
 ```
 
-Rules:
+---
 
-• only ALLOW and FLAG signals returned  
-• REJECT signals removed  
-• structure remains unchanged  
-
-Example output:
+## 2 Run Validation Tests
 
 ```
-[
- { "signal_id": "SIG910", "status": "ALLOW", ... },
- { "signal_id": "SIG911", "status": "FLAG", ... }
-]
+python test_validation.py
 ```
 
-This ensures **plug-and-play integration with Sanskar**.
+---
+
+## 3 Run Demo Pipeline
+
+```
+python run_demo.py
+```
+
+---
+
+## 4 Start API Server
+
+```
+uvicorn main:app --reload
+```
+
+---
+
+## 5 Open API Documentation
+
+Open in browser:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+---
+
+# Example API Request
+
+```json
+{
+ "signal_id": "SIG920",
+ "timestamp": "2026-03-10T10:00:00Z",
+ "latitude": 19.07,
+ "longitude": 72.87,
+ "feature_type": "weather",
+ "value": 30,
+ "dataset_id": "DS01"
+}
+```
+
+---
+
+# Example API Response
+
+```json
+{
+ "validation": {
+   "signal_id": "SIG920",
+   "status": "ALLOW",
+   "confidence_score": 0.92,
+   "trace_id": "...",
+   "reason": "valid signal"
+ },
+
+ "analytics": {
+   "signal_id": "SIG920",
+   "status": "ALLOW",
+   "confidence_score": 0.92,
+   "anomaly_score": 0.08,
+   "priority": "LOW"
+ },
+
+ "decision": {
+   "decision": "PROCEED",
+   "risk_level": "LOW",
+   "reason": "Decision based on anomaly score"
+ }
+}
+```
 
 ---
 
@@ -257,162 +406,41 @@ nicai_validation_layer
 ├── dataset_registry.py
 ├── schemas.py
 ├── utils.py
+│
+├── sanskar_stub.py
+├── decision_engine_stub.py
+├── run_demo.py
+│
 ├── bucket_emitter.py
 ├── telemetry_emitter.py
+│
 ├── schema.json
 ├── datasets.json
 ├── sample_signals.json
+│
 ├── test_validation.py
 ├── integration_test.py
+│
 ├── bucket_artifacts.jsonl
 ├── telemetry.log
-├── REVIEW_PACKET.md
-└── README.md
+│
+├── README.md
+└── REVIEW_PACKET.md
 ```
-
----
-
-# How to Run the Project
-
-### 1 Install Dependencies
-
-```
-pip install fastapi uvicorn
-```
-
----
-
-### 2 Run Validation Test Script
-
-```
-python test_validation.py
-```
-
-This script tests:
-
-• valid signals  
-• FLAG signals  
-• REJECT signals  
-• malformed input  
-• batch validation  
-
----
-
-### 3 Run Integration Test (Sanskar Interface)
-
-```
-python integration_test.py
-```
-
-This test demonstrates:
-
-```
-NICAI → Sanskar Integration
-ALLOW + FLAG signals forwarded
-REJECT signals filtered
-```
-
----
-
-### 4 Start the Validation API
-
-```
-uvicorn main:app --reload
-```
-
----
-
-### 5 Open API Documentation
-
-Open in browser:
-
-```
-http://127.0.0.1:8000/docs
-```
-
-Use Swagger UI to test the `/validate` endpoint.
-
----
-
-# Example Signal Input
-
-```
-{
- "signal_id": "SIG500",
- "timestamp": "2026-03-10T10:00:00Z",
- "latitude": 19.07,
- "longitude": 72.87,
- "feature_type": "weather",
- "value": 34,
- "dataset_id": "DS01"
-}
-```
-
----
-
-# Example Validation Output
-
-```
-{
- "signal_id": "SIG500",
- "status": "ALLOW",
- "confidence_score": 0.92,
- "trace_id": "80b8678cd19b352d6f374d972912dca0d5af0fa2ffd4a7f09d68b56d65db23a9",
- "reason": "valid signal"
-}
-```
-
----
-
-# Failure Handling
-
-The system safely handles:
-
-• missing required fields  
-• malformed input signals  
-• unregistered datasets  
-• inactive datasets  
-• emitter failures  
-
-System guarantees:
-
-• validation output always returned  
-• batch execution continues  
-• system does not crash  
-
----
-
-# Testing
-
-Testing is performed using:
-
-• `test_validation.py`  
-• `integration_test.py`  
-• FastAPI `/validate` endpoint  
-
-Test scenarios include:
-
-• valid signals  
-• inactive dataset signals  
-• missing field signals  
-• malformed inputs  
-• batch signals  
-• Sanskar integration  
-
-All outputs are **deterministic, contract-safe, and batch-consistent**.
 
 ---
 
 # Summary
 
-This project implements a **deterministic, observable, and contract-safe domain validation layer for NICAI**.
+This project converts the NICAI validation module into a **fully connected deterministic pipeline demonstration system**.
 
-The system guarantees:
+The system now provides:
 
-• deterministic validation outputs  
-• strict schema contract enforcement  
-• traceable validation artifacts  
-• telemetry-based observability  
-• seamless integration with Sanskar intelligence systems  
+- deterministic signal validation
+- analytics simulation layer
+- decision simulation layer
+- structured pipeline API
+- observability support
+- demo-ready execution
 
-The NICAI validation layer ensures that **only trusted, structured, and traceable signals enter the intelligence pipeline**.
+The system is now **integration-ready for downstream intelligence systems.**
