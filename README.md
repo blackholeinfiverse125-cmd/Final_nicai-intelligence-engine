@@ -2,9 +2,9 @@
 
 ## Overview
 
-This project implements the **NICAI Domain Data Integrity Layer integrated with an end-to-end pipeline simulation**.
+This project implements the **NICAI Domain Data Integrity Layer integrated with a deterministic end-to-end pipeline simulation**.
 
-The system validates incoming signals and passes them through a deterministic pipeline that simulates downstream intelligence layers.
+The system validates incoming signals and passes them through a structured intelligence pipeline while maintaining **strict architectural separation, deterministic behavior, and observability**.
 
 Pipeline Flow:
 
@@ -13,14 +13,18 @@ Samachar (Input Signals)
         ↓
 NICAI Validation Layer
         ↓
+Bucket (Artifact Storage)
+        ↓
+InsightFlow (Telemetry Logs)
+        ↓
 Sanskar Analytics Stub
         ↓
 Decision Engine Stub
         ↓
-Final Structured Output
+Final Pipeline Output
 ```
 
-The goal of this project is to demonstrate how **validated signals flow through an intelligence pipeline while maintaining deterministic behavior, observability, and strict architectural separation.**
+The goal of this project is to demonstrate how **validated signals safely propagate through an intelligence pipeline before reaching downstream systems**.
 
 ---
 
@@ -28,17 +32,17 @@ The goal of this project is to demonstrate how **validated signals flow through 
 
 The NICAI layer performs the following responsibilities:
 
-- validates incoming signal schema
-- verifies dataset registry status
-- generates deterministic trace identifiers
-- emits validation artifacts to Bucket
-- emits telemetry logs for observability
-- forwards valid signals to analytics layer
-- produces structured multi-layer outputs
+- validate incoming signal schema
+- verify dataset registry status
+- generate deterministic trace identifiers
+- emit validation artifacts for memory layer
+- emit telemetry metrics for observability
+- forward trusted signals to analytics systems
+- produce structured pipeline outputs
 
-Important architectural rule:
+Architectural principle:
 
-**Validation logic is never mixed with intelligence or decision logic.**
+**Validation logic must never contain intelligence or decision logic.**
 
 ---
 
@@ -46,10 +50,10 @@ Important architectural rule:
 
 • deterministic signal validation  
 • strict schema enforcement  
-• SHA256 based trace_id generation  
+• SHA256 based `trace_id` generation  
 • batch-safe signal processing  
 • analytics simulation layer (Sanskar Stub)  
-• rule-based decision simulation layer  
+• rule-based decision engine stub  
 • structured API pipeline response  
 • observability support (Bucket + Telemetry)  
 • demo pipeline execution script  
@@ -87,8 +91,8 @@ Responsibilities:
 - validate required signal fields
 - verify dataset registry
 - assign validation status
-- generate deterministic trace_id
-- produce structured validation output
+- generate deterministic trace identifiers
+- produce structured validation outputs
 
 Validation statuses:
 
@@ -112,6 +116,31 @@ Validation Output Format:
 
 ---
 
+# Downstream Integration Contract
+
+Validated signals are forwarded to downstream systems using the following contract.
+
+```json
+{
+ "signal_id": "...",
+ "status": "ALLOW | FLAG",
+ "confidence_score": ...,
+ "trace_id": "...",
+ "reason": "..."
+}
+```
+
+Integration Rules:
+
+• `REJECT` signals are filtered  
+• `ALLOW` and `FLAG` signals are forwarded  
+• output schema remains deterministic  
+• no additional dynamic fields allowed  
+
+This ensures **clean integration with the Sanskar analytics layer.**
+
+---
+
 # Analytics Layer (Sanskar Stub)
 
 File: `sanskar_stub.py`
@@ -121,7 +150,7 @@ This module simulates the **analytics layer**.
 Behavior:
 
 - accepts validated signals
-- calculates anomaly score
+- computes anomaly score
 - assigns signal priority
 
 Analytics Output Format:
@@ -136,7 +165,13 @@ Analytics Output Format:
 }
 ```
 
-This layer prepares signals for decision processing.
+Example rule behavior:
+
+| Anomaly Score | Priority |
+|---------------|----------|
+| Low           | LOW      |
+| Medium        | MEDIUM   |
+| High          | HIGH     |
 
 ---
 
@@ -144,7 +179,7 @@ This layer prepares signals for decision processing.
 
 File: `decision_engine_stub.py`
 
-This module simulates the decision layer.
+This module converts analytics results into deterministic decisions.
 
 Decision rules:
 
@@ -204,20 +239,28 @@ If validation result is **REJECT**, only validation output is returned.
 
 # Determinism Guarantee
 
-The system guarantees deterministic outputs.
+The system guarantees deterministic behavior.
 
 Measures implemented:
 
-- SHA256 based trace_id generation
-- rule-based analytics scoring
-- rule-based decision engine
-- sorted batch processing
+• SHA256 based trace_id generation  
+• rule-based analytics scoring  
+• rule-based decision engine  
+• sorted batch processing  
 
 Result:
 
 ```
-Same Input → Same Validation → Same Analytics → Same Decision
+Same Input
+      ↓
+Same Validation
+      ↓
+Same Analytics
+      ↓
+Same Decision
 ```
+
+This ensures reproducible and stable system behavior.
 
 ---
 
@@ -229,7 +272,7 @@ The system supports observability through two mechanisms.
 
 Stores validation artifacts.
 
-Example storage file:
+Storage file:
 
 ```
 bucket_artifacts.jsonl
@@ -249,19 +292,25 @@ Artifact Example:
 }
 ```
 
+Purpose:
+
+- trace continuity
+- validation history
+- debugging support
+
 ---
 
 ## Telemetry Logs (InsightFlow)
 
 Telemetry logs capture pipeline metrics.
 
-Example storage file:
+Storage file:
 
 ```
 telemetry.log
 ```
 
-Telemetry Record Example:
+Telemetry Example:
 
 ```json
 {
@@ -273,36 +322,50 @@ Telemetry Record Example:
 }
 ```
 
+Purpose:
+
+- system monitoring
+- validation metrics tracking
+- operational visibility
+
 ---
 
 # Demo Mode
 
 File: `run_demo.py`
 
-This script simulates signals and executes the full pipeline.
+This script simulates signals and runs the full pipeline.
 
-Command:
+Run command:
 
-```bash
+```
 python run_demo.py
+```
+
+Demo Flow:
+
+```
+Input Signal
+      ↓
+Validation Layer
+      ↓
+Analytics Layer
+      ↓
+Decision Engine
+      ↓
+Final Output
 ```
 
 Example Console Output:
 
 ```
 INPUT SIGNAL
-
-VALIDATION RESULT
-ALLOW
-
-ANALYTICS RESULT
-LOW priority signal
-
-DECISION
-PROCEED
+VALIDATION → ALLOW
+ANALYTICS → LOW priority
+DECISION → PROCEED
 ```
 
-This demonstrates the **complete pipeline execution**.
+This demonstrates the **complete end-to-end pipeline execution.**
 
 ---
 
@@ -432,7 +495,7 @@ nicai_validation_layer
 
 # Summary
 
-This project converts the NICAI validation module into a **fully connected deterministic pipeline demonstration system**.
+This project converts the NICAI validation module into a **fully connected deterministic pipeline system**.
 
 The system now provides:
 
@@ -442,5 +505,6 @@ The system now provides:
 - structured pipeline API
 - observability support
 - demo-ready execution
+- downstream integration compatibility
 
-The system is now **integration-ready for downstream intelligence systems.**
+The system is now **integration-ready for intelligence pipelines and downstream systems.**
