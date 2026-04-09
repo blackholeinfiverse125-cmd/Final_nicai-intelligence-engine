@@ -5,7 +5,7 @@ signals = [
 {
  "signal_id": "SIG910",
  "timestamp": "2026-03-10T10:00:00Z",
- "latitude": 19.07,
+ "latitude": 19.07, 
  "longitude": 72.87,
  "feature_type": "weather",
  "value": 34,
