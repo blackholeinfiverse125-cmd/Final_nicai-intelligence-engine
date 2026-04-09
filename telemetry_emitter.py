@@ -8,7 +8,7 @@ def emit_telemetry(signal, result):
     """
 
     telemetry_record = {
-        "trace_id": result["trace_id"],
+        "trace_id": result["trace_id"], 
         "dataset_id": signal.get("dataset_id"),
         "status": result["status"],
         "confidence_score": result["confidence_score"],
