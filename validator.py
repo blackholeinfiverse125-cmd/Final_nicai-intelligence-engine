@@ -10,7 +10,7 @@ def validate_signal(signal):
 
     # Generate deterministic trace id
     trace_id = generate_trace_id(signal)
-
+ 
     # 1️⃣ Check missing fields
     for field in required_fields:
         if field not in signal:
