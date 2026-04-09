@@ -7,7 +7,7 @@ valid_signal = {
     "timestamp": "2026-03-10T10:00:00Z",
     "latitude": 19.07,
     "longitude": 72.87,
-    "feature_type": "weather",
+    "feature_type": "weather", 
     "value": 34,
     "dataset_id": "DS01"
 }
