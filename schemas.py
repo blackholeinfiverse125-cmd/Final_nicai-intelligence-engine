@@ -5,5 +5,5 @@ required_fields = [
     "longitude",
     "feature_type",
     "value",
-    "dataset_id"
+    "dataset_id" 
 ]
