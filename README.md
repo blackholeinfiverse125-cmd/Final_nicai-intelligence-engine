@@ -1,283 +1,367 @@
-# NICAI Signal Evaluation Pipeline (TANTRA Integration)
+# NICAI – Networked Intelligence & Context Analysis Interface
 
-## Overview
+A deterministic intelligence system that processes real-world datasets, detects anomalies, and provides actionable intelligence through a dashboard without executing decisions.
 
-This project implements the **NICAI signal evaluation system**, which acts as a validation and intelligence pipeline within the **TANTRA architecture**.
-
-The system receives structured signals, validates them, performs analytics, and generates deterministic decision outputs.
-It is designed to simulate integration with other TANTRA components while maintaining **clean architectural boundaries and deterministic behavior**.
-
-The pipeline ensures that only valid and trusted signals are processed by downstream systems.
+NICAI transforms raw signals into structured intelligence while maintaining **traceability, transparency, and deterministic outputs**.
 
 ---
 
-## System Architecture
+# System Overview
 
-The system follows a layered pipeline architecture:
+NICAI acts as an **intelligence layer** between raw data sources and governance systems.
+
+It performs:
+
+* Signal validation
+* Deterministic anomaly detection
+* Risk analysis
+* Multi-signal intelligence
+* Dashboard visualization
+* Structured action routing
+
+Important:
+NICAI **does not execute decisions**.
+It only produces intelligence outputs and action payloads.
+
+---
+
+# System Architecture
 
 ```
-Samachar (Input Signals)
-        ↓
-NICAI Validation Layer
-        ↓
-Analytics Engine
-        ↓
-Decision Engine
-        ↓
-Final Decision Output
+Dataset
+   ↓
+Samachar Input Adapter
+   ↓
+Signal Conversion
+   ↓
+Validation Layer
+   ↓
+Intelligence Engine
+   ↓
+Multi-Signal Analyzer
+   ↓
+Dashboard Interface
+   ↓
+User Action Trigger
+   ↓
+Action Payload Generation
+   ↓
+Action Logs
 ```
 
-Each layer performs a specific responsibility while keeping the system modular and extensible.
+---
+
+# Key Features
+
+## Deterministic Validation Layer
+
+Ensures signal integrity and traceability.
+
+Outputs:
+
+* status
+* confidence score
+* trace ID
 
 ---
 
-## Key Features
+## Intelligence Engine
 
-* deterministic signal validation
-* structured analytics processing
-* rule-based decision engine
-* clean API integration layer
-* simulation-ready architecture
-* compatibility with future TANTRA components
+Detects anomalies and generates structured explanations.
+
+Produces:
+
+* anomaly score
+* risk level
+* anomaly type
+* explanation
+* recommendation signal
 
 ---
 
-## Final Output Contract
+## Multi-Signal Intelligence
 
-The NICAI system produces the following structured output:
+Analyzes signal clusters to detect patterns across datasets.
+
+Outputs:
+
+* anomaly count
+* affected zones
+* pattern summary
+
+---
+
+## FastAPI Dashboard
+
+Displays real-time intelligence information including:
+
+* Signal ID
+* Validation Status
+* Risk Level
+* Anomaly Type
+* Explanation
+* Recommendation Signal
+
+---
+
+## Action Interface
+
+Users can trigger actions from the dashboard.
+
+Available actions:
+
+* Escalate
+* Review
+* Assign
+
+NICAI generates structured action payloads instead of executing actions.
+
+Example payload:
 
 ```json
 {
-  "signal_id": "...",
-  "status": "...",
-  "confidence_score": 0.0,
-  "trace_id": "...",
-  "reason": "...",
-  "anomaly_score": 0.0,
-  "priority": "...",
-  "decision": "...",
-  "risk_level": "...",
-  "summary_line": "...",
-  "explanation": "..."
+ "trace_id": "acf999a9afdfaabee481b750fc75e0ffa1648ba14cb38b9187776d30e85a3bf9",
+ "action_type": "ESCALATE",
+ "target_role": "authority",
+ "timestamp": "2026-04-14T04:21:32"
 }
 ```
 
-This output format is designed for integration with downstream systems such as **Mitra** and future simulation systems.
-
----
-
-## API Endpoints
-
-The system exposes three REST APIs.
-
-### 1. Validation API
+Actions are logged into:
 
 ```
-POST /validate
-```
-
-Performs signal validation only.
-
-Example input:
-
-```json
-{
- "signal_id": "SIG100",
- "value": 80,
- "dataset_id": "DS01"
-}
+action_logs.json
 ```
 
 ---
 
-### 2. Pipeline API
+# Dataset Sources
+
+NICAI currently ingests multiple real datasets.
+
+Examples:
+
+Weather Dataset
+Used for temperature anomaly detection.
+
+AQI Dataset
+Used for pollution anomaly detection.
+
+Datasets are processed using:
 
 ```
-POST /pipeline
-```
-
-Runs the full NICAI pipeline including validation, analytics, and decision stages.
-
-Output includes structured responses from all pipeline layers.
-
----
-
-### 3. NICAI Evaluation API
-
-```
-POST /nicai/evaluate
-```
-
-This endpoint provides the **final decision-ready output** for the TANTRA system.
-
-Example response:
-
-```json
-{
- "signal_id": "SIG100",
- "status": "ALLOW",
- "confidence_score": 0.92,
- "trace_id": "...",
- "reason": "valid signal",
- "anomaly_score": 0.08,
- "priority": "LOW",
- "decision": "PROCEED",
- "risk_level": "LOW",
- "summary_line": "Signal PROCEED with LOW priority",
- "explanation": "Decision based on anomaly score"
-}
+samachar_input_adapter.py
 ```
 
 ---
 
-## Validation Rules
-
-The validation layer performs the following checks:
-
-* required signal fields
-* dataset registry verification
-* dataset status validation
-* deterministic trace_id generation
-
-Possible validation statuses:
-
-```
-ALLOW
-FLAG
-REJECT
-```
-
-Rules:
-
-* **ALLOW** → signal moves to analytics
-* **FLAG** → pipeline continues but marked as medium risk
-* **REJECT** → pipeline stops at validation
-
----
-
-## Analytics Engine
-
-The analytics engine computes the **anomaly score** and assigns signal priority.
-
-Priority levels:
-
-```
-LOW
-MEDIUM
-HIGH
-```
-
-This stage simulates the analytics capability of future TANTRA systems.
-
----
-
-## Decision Engine
-
-The decision engine converts analytics output into deterministic decisions.
-
-Decision rules:
-
-```
-HIGH anomaly → ALERT
-MEDIUM anomaly → REVIEW
-LOW anomaly → PROCEED
-```
-
-This provides a final decision that can be consumed by downstream systems.
-
----
-
-## Deterministic Design
-
-The system is fully deterministic.
-
-This means:
-
-```
-Same Input
-   ↓
-Same Validation
-   ↓
-Same Analytics
-   ↓
-Same Decision
-```
-
-Deterministic behavior ensures reliable integration with other components.
-
----
-
-## Running the Project
-
-### Install Dependencies
-
-```
-pip install fastapi uvicorn
-```
-
-### Start the API Server
-
-```
-uvicorn main:app --reload
-```
-
-### Open API Documentation
-
-```
-http://127.0.0.1:8000/docs
-```
-
-This opens the interactive Swagger API interface.
-
----
-
-## Project Structure
+# Project Structure
 
 ```
 nicai_validation_layer
 │
-├── main.py
+├── data
+│   ├── clean_aqi.csv
+│   ├── clean_weather.csv
+│
 ├── validator.py
 ├── analytics_engine.py
-├── decision_engine.py
+├── multi_signal_analyzer.py
 ├── samachar_input_adapter.py
-├── error_handler.py
 │
-├── dataset_registry.py
-├── datasets.json
+├── dashboard.py
+├── run_demo_full.py
 │
-├── utils.py
-├── schemas.py
-├── schema.json
+├── action_logs.json
+├── telemetry_metrics.json
 │
-├── bucket_emitter.py
-├── telemetry_emitter.py
-│
-├── sample_signals.json
-│
-├── README.md
 ├── REVIEW_PACKET.md
 ├── TESTING_PACKET.md
+│
+└── README.md
 ```
 
 ---
 
-## Demo Flow
+# Installation
 
-The demo demonstrates the following steps:
+Clone repository:
 
-1. Input signal submission
-2. Validation of the signal
-3. Analytics computation
-4. Decision generation
-5. Final structured response
+```
+git clone https://github.com/your-repository/nicai-system.git
+```
 
-This demonstrates how NICAI functions as a **signal evaluation component inside the TANTRA ecosystem**.
+Navigate to project directory:
+
+```
+cd nicai_validation_layer
+```
+
+Install dependencies:
+
+```
+pip install fastapi uvicorn pandas
+```
 
 ---
 
-## Conclusion
+# Running the System
 
-This project converts the NICAI validation module into a **complete signal evaluation pipeline** that supports deterministic analytics and decision outputs.
+## Run Full NICAI Demo
 
-The system is now ready to integrate with other TANTRA components and demonstrates a clean architecture suitable for scalable intelligence pipelines.
+```
+python run_demo_full.py
+```
+
+This performs:
+
+1. Dataset ingestion
+2. Signal generation
+3. Validation
+4. Intelligence analysis
+5. Multi-signal pattern detection
+6. Dashboard instructions
+
+---
+
+# Launch Dashboard
+
+Run:
+
+```
+uvicorn dashboard:app --reload
+```
+
+Open browser:
+
+```
+http://127.0.0.1:8000
+```
+
+The dashboard will display:
+
+* signals
+* anomaly types
+* risk levels
+* explanations
+
+---
+
+# Action Logging
+
+When dashboard actions are triggered, the system logs payloads in:
+
+```
+action_logs.json
+```
+
+Example:
+
+```
+{
+ "trace_id": "...",
+ "action_type": "ESCALATE",
+ "target_role": "authority",
+ "timestamp": "2026-04-14T04:21:32"
+}
+```
+
+---
+
+# Observability
+
+System telemetry is stored in:
+
+```
+telemetry_metrics.json
+```
+
+Logs include:
+
+* validation events
+* anomaly detection
+* system execution stages
+* action routing
+
+---
+
+# Demo Execution Flow
+
+1 Run demo script
+
+```
+python run_demo_full.py
+```
+
+2 Start dashboard
+
+```
+uvicorn dashboard:app --reload
+```
+
+3 Open browser
+
+```
+http://127.0.0.1:8000
+```
+
+4 Trigger actions from dashboard
+
+5 Verify logs
+
+```
+action_logs.json
+```
+
+---
+
+# Testing
+
+Testing instructions are provided in:
+
+```
+TESTING_PACKET.md
+```
+
+Testing includes:
+
+* input validation
+* anomaly detection
+* dashboard actions
+* log verification
+* failure scenarios
+
+---
+
+# System Status
+
+The system currently supports:
+
+* real dataset ingestion
+* deterministic signal validation
+* anomaly detection
+* multi-signal intelligence
+* dashboard visualization
+* action payload routing
+* telemetry logging
+
+The system is **demo-ready and locally executable**.
+
+---
+
+# Developer
+
+**Ankita Prajapati**
+
+Role:
+NICAI Core Developer
+
+Responsibilities:
+
+* Validation Layer
+* Intelligence Engine
+* Dashboard API
+* Action Routing
+* Demo Integration
+
+---
