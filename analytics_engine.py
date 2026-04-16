@@ -1,14 +1,41 @@
 def analyze_signal(signal):
 
-    value = signal.get("value", 0)
-    feature = signal.get("feature_type", "").lower()
+    # -----------------------------
+    # 🔹 INPUT SAFETY
+    # -----------------------------
+    if not isinstance(signal, dict):
+        return {
+            "risk_level": "LOW",
+            "anomaly_score": 0.0,
+            "anomaly_type": "INVALID_SIGNAL",
+            "explanation": "Signal format invalid",
+            "recommendation_signal": "MONITOR"
+        }
 
+    # -----------------------------
+    # 🔹 SAFE EXTRACTION
+    # -----------------------------
+    value = signal.get("value", 0)
+
+    try:
+        value = float(value)
+    except:
+        value = 0
+
+    feature = signal.get("feature_type") or ""
+    feature = str(feature).lower()
+
+    # -----------------------------
+    # 🔹 DEFAULT STATE
+    # -----------------------------
     risk_level = "LOW"
     anomaly_score = 0.2
     anomaly_type = "NORMAL"
     explanation = "Everything normal"
 
-    # 🌡 Temperature Analysis
+    # -----------------------------
+    # 🌡 TEMPERATURE
+    # -----------------------------
     if feature == "temperature":
 
         if value >= 45:
@@ -23,7 +50,9 @@ def analyze_signal(signal):
             anomaly_type = "TEMPERATURE_RISE"
             explanation = "Temperature rising above safe threshold"
 
-    # 🌫 AQI Analysis
+    # -----------------------------
+    # 🌫 AQI
+    # -----------------------------
     elif feature == "aqi":
 
         if value >= 300:
@@ -38,7 +67,9 @@ def analyze_signal(signal):
             anomaly_type = "HIGH_POLLUTION"
             explanation = "Air quality unhealthy"
 
-    # 🚦 Traffic Analysis
+    # -----------------------------
+    # 🚦 TRAFFIC
+    # -----------------------------
     elif feature == "traffic":
 
         if value >= 90:
@@ -53,7 +84,9 @@ def analyze_signal(signal):
             anomaly_type = "HEAVY_TRAFFIC"
             explanation = "Traffic density increasing"
 
-    # 🎯 Recommendation logic
+    # -----------------------------
+    # 🎯 FINAL DECISION
+    # -----------------------------
     if risk_level == "HIGH":
         recommendation = "ESCALATE"
     elif risk_level == "MEDIUM":
