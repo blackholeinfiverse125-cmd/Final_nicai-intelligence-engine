@@ -2,26 +2,8 @@ from schemas import required_fields
 from dataset_registry import get_dataset
 from utils import generate_trace_id, validate_output_schema
 
-import json
-
-def emit_bucket_artifact(data):
-    try:
-        with open("bucket_logs.json", "a") as f:
-            f.write(json.dumps(data) + "\n")
-    except:
-        pass
 
 
-def emit_telemetry(signal, result):
-    try:
-        with open("telemetry_logs.json", "a") as f:
-            f.write(json.dumps({
-                "signal": signal,
-                "result": result
-            }) + "\n")
-    except:
-        pass
-        
 def validate_signal(signal):
 
     # Generate deterministic trace id
