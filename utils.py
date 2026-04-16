@@ -1,34 +1,29 @@
 import hashlib
 import json
-from jsonschema import validate
+import os
+from jsonschema import validate, ValidationError
 
 
 def generate_trace_id(signal):
-    """
-    Generate deterministic trace_id using SHA256.
-
-    Same input → same trace_id.
-    Handles malformed inputs safely.
-    """
-
-    signal_id = str(signal.get("signal_id", "unknown"))
-    timestamp = str(signal.get("timestamp", "unknown"))
-    dataset_id = str(signal.get("dataset_id", "unknown"))
-
-    base_string = f"{signal_id}{timestamp}{dataset_id}"
-
-    trace_id = hashlib.sha256(base_string.encode()).hexdigest()
-
-    return trace_id
+    base_string = f"{signal.get('signal_id','')}|{signal.get('timestamp','')}|{signal.get('dataset_id','')}"
+    return hashlib.sha256(base_string.encode()).hexdigest()
 
 
 def validate_output_schema(output):
-    """
-    Enforce strict validation output contract using schema.json.
-    Ensures no schema drift across systems.
-    """
+    try:
+        schema_path = os.path.join(os.path.dirname(__file__), "schema.json")
 
-    with open("schema.json", "r") as f:
-        schema = json.load(f)
+        with open(schema_path, "r") as f:
+            schema = json.load(f)
 
-    validate(instance=output, schema=schema)
+        validate(instance=output, schema=schema)
+        return True
+
+    except ValidationError as e:
+        print("Schema validation error:", e)
+        return False
+
+
+def emit_bucket_artifact(data):
+    with open("logs.txt", "a") as f:
+        f.write(json.dumps(data) + "\n")
