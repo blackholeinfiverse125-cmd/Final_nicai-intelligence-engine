@@ -2,10 +2,6 @@ from schemas import required_fields
 from dataset_registry import get_dataset
 from utils import generate_trace_id, validate_output_schema
 
-from bucket_emitter import emit_bucket_artifact
-from telemetry_emitter import emit_telemetry
-
-
 def validate_signal(signal):
 
     # Generate deterministic trace id
