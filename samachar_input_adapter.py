@@ -1,12 +1,18 @@
 import pandas as pd
 
 
+# -----------------------------
+# 1️⃣ LOAD DATA
+# -----------------------------
 def load_data():
     try:
         weather = pd.read_csv("clean_weather.csv")
         aqi = pd.read_csv("clean_aqi.csv")
 
         print("✅ Data Loaded Successfully")
+        print("Weather rows:", len(weather))
+        print("AQI rows:", len(aqi))
+
         return weather, aqi
 
     except Exception as e:
@@ -14,6 +20,9 @@ def load_data():
         return None, None
 
 
+# -----------------------------
+# 2️⃣ CONVERT TO NICAI SIGNALS
+# -----------------------------
 def convert_to_signals(weather, aqi):
 
     if weather is None or aqi is None:
@@ -22,10 +31,17 @@ def convert_to_signals(weather, aqi):
 
     signals = []
 
-    # Weather
+    # -----------------------------
+    # Weather signals
+    # -----------------------------
     for i, row in weather.iterrows():
 
-        temp = row.get("temperature") or row.get("temp") or row.get("Temperature")
+        # SAFE column extraction (NO "or" bug)
+        temp = row.get("temperature")
+        if temp is None:
+            temp = row.get("temp")
+        if temp is None:
+            temp = row.get("Temperature")
 
         if pd.isna(temp):
             continue
@@ -40,10 +56,14 @@ def convert_to_signals(weather, aqi):
             "dataset_id": "DS_WEATHER"
         })
 
-    # AQI
+    # -----------------------------
+    # AQI signals
+    # -----------------------------
     for i, row in aqi.iterrows():
 
-        aqi_val = row.get("aqi") or row.get("AQI")
+        aqi_val = row.get("aqi")
+        if aqi_val is None:
+            aqi_val = row.get("AQI")
 
         if pd.isna(aqi_val):
             continue
