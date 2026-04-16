@@ -2,7 +2,8 @@ import uuid
 from collections import defaultdict
 
 
-def analyze_multi_signals(outputs):
+def analyze_patterns(outputs):
+
     anomaly_count = 0
     affected_zones = set()
     linked_traces = []
@@ -23,14 +24,18 @@ def analyze_multi_signals(outputs):
             if trace_id:
                 linked_traces.append(trace_id)
 
-            # detect zone if available
+            # detect zone safely
             lat = o.get("latitude")
             lon = o.get("longitude")
 
-            if lat and lon:
+            # FIX 1: correct lat/lon check
+            if lat is not None and lon is not None:
                 zone = f"{lat}_{lon}"
             else:
                 zone = o.get("zone", "Unknown")
+
+            # FIX 2: force string (avoid unhashable dict error)
+            zone = str(zone)
 
             affected_zones.add(zone)
             zone_frequency[zone] += 1
@@ -73,3 +78,8 @@ def analyze_multi_signals(outputs):
     }
 
     return pattern_output
+
+
+# 🔥 IMPORTANT: add this function (missing in your project)
+def analyze_multi_signals(outputs):
+    return analyze_patterns(outputs)
