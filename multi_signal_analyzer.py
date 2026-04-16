@@ -2,14 +2,17 @@ import hashlib
 from collections import defaultdict
 
 
+# -----------------------------
+# 🔹 PATTERN ID GENERATOR
+# -----------------------------
 def generate_pattern_id(linked_traces):
-    """
-    Deterministic pattern id based on traces
-    """
     base = "".join(sorted(linked_traces))
     return "PATTERN_" + hashlib.sha256(base.encode()).hexdigest()[:6]
 
 
+# -----------------------------
+# 🔥 CORE ANALYSIS ENGINE
+# -----------------------------
 def analyze_patterns(outputs):
 
     anomaly_count = 0
@@ -19,77 +22,96 @@ def analyze_patterns(outputs):
 
     for o in outputs:
 
-        # --- SAFETY: ensure dict ---
+        # -----------------------------
+        # 🔹 SAFE INPUT CHECK
+        # -----------------------------
         if not isinstance(o, dict):
             continue
 
         risk = o.get("risk_level")
+        anomaly_score = o.get("anomaly_score", 0)
         trace_id = o.get("trace_id")
 
-        if risk == "HIGH" or o.get("anomaly_score", 0) >= 0.6:
+        # -----------------------------
+        # 🔹 ANOMALY CONDITION
+        # -----------------------------
+        if risk == "HIGH" or anomaly_score >= 0.6:
 
             anomaly_count += 1
 
             # trace tracking
-            if trace_id:
+            if trace_id is not None:
                 linked_traces.append(str(trace_id))
 
-            # --- SAFE ZONE EXTRACTION ---
+            # -----------------------------
+            # 🔹 SAFE ZONE HANDLING (FIXED)
+            # -----------------------------
             lat = o.get("latitude")
             lon = o.get("longitude")
+
+            zone = None
 
             if isinstance(lat, (int, float)) and isinstance(lon, (int, float)):
                 zone = f"{lat}_{lon}"
             else:
                 zone = o.get("zone", "Unknown")
 
-            # 🚨 FINAL SAFETY (fix unhashable issue)
-            if isinstance(zone, dict):
-                zone = str(zone)
+            # FORCE SAFE TYPE (IMPORTANT FIX)
+            if isinstance(zone, (dict, list, tuple)):
+                zone = json_safe_string(zone)
 
             zone = str(zone)
 
             affected_zones.add(zone)
             zone_frequency[zone] += 1
 
-    # --- DETERMINISTIC PATTERN ID ---
+    # -----------------------------
+    # 🔹 PATTERN ID
+    # -----------------------------
     pattern_id = generate_pattern_id(linked_traces)
 
-    # --- severity trend ---
+    # -----------------------------
+    # 🔹 SEVERITY
+    # -----------------------------
     if anomaly_count >= 5:
         severity_trend = "INCREASING"
+        pattern_type = "CLUSTER_ANOMALY"
+        summary = "Clustered high-risk anomalies detected in nearby region"
+
     elif anomaly_count >= 2:
         severity_trend = "STABLE"
+        pattern_type = "REPEATED_ANOMALY"
+        summary = "Some anomalies detected"
+
     else:
         severity_trend = "LOW"
-
-    # --- pattern type ---
-    if anomaly_count >= 5:
-        pattern_type = "CLUSTER_ANOMALY"
-    elif anomaly_count >= 2:
-        pattern_type = "REPEATED_ANOMALY"
-    else:
         pattern_type = "ISOLATED_EVENT"
-
-    # --- summary ---
-    if anomaly_count >= 5:
-        summary = "Clustered high-risk anomalies detected in nearby region"
-    elif anomaly_count > 0:
-        summary = "Some anomalies detected"
-    else:
         summary = "No major anomalies"
 
     return {
         "pattern_id": pattern_id,
         "anomaly_count": anomaly_count,
-        "affected_zones": sorted(list(affected_zones)),  # deterministic order
+        "affected_zones": sorted(list(affected_zones)),
         "pattern_summary": summary,
         "pattern_type": pattern_type,
         "severity_trend": severity_trend,
-        "linked_traces": sorted(linked_traces)  # deterministic
+        "linked_traces": sorted(linked_traces)
     }
 
 
-# wrapper
+# -----------------------------
+# 🔥 WRAPPER
+# -----------------------------
 def analyze_multi_signals(outputs):
     return analyze_patterns(outputs)
+
+
+# -----------------------------
+# 🔹 SAFE SERIALIZER HELPER (IMPORTANT)
+# -----------------------------
+def json_safe_string(obj):
+    try:
+        import json
+        return json.dumps(obj, default=str)
+    except:
+        return str(obj)
