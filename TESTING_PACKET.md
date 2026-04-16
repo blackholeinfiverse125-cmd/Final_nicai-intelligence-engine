@@ -1,319 +1,344 @@
-# TESTING_PACKET.md
+# NICAI TESTING PACKET
 
-# NICAI Pipeline Testing Packet
-
-This document provides the complete testing guide for verifying the **NICAI deterministic pipeline**.
-It allows testers to validate the full system behavior including **validation, analytics, decision generation, and failure handling**.
-
----
-
-# 1. System Overview
-
-The NICAI pipeline processes structured signals and produces deterministic decisions.
-
-Pipeline Flow:
-
-```
-Signal Input
-     ↓
-Validation Layer
-     ↓
-Analytics Engine
-     ↓
-Decision Engine
-     ↓
-Final Decision Output
-```
-
-The system guarantees:
-
-* Deterministic outputs (same input → same output)
-* Clean API contract
-* Failure-safe processing
-* Clear decision explanations
+Project: NICAI Intelligence System  
+Developer: Ankita Prajapati  
+Testing Authority: Vinayak Tiwari  
+Testing Protocol: BHIV Universal Testing Protocol  
 
 ---
 
-# 2. API Endpoints
+# 1. SYSTEM OVERVIEW
 
-The system exposes the following API endpoints.
+NICAI is a deterministic intelligence system designed to process real-world datasets and produce structured anomaly intelligence outputs.
 
-### 1. Validation API
+The system does NOT execute decisions.
 
-```
-POST /validate
-```
+Instead, it performs intelligence analysis and routes action triggers through a dashboard interface.
 
-Purpose:
-Validates signal structure and dataset registry.
+Pipeline:
 
-Output:
-Validation result only.
+Data Ingestion → Signal Conversion → Validation → Intelligence Analysis → Multi-Signal Pattern Detection → Dashboard Visualization → Action Trigger → Logging
 
 ---
 
-### 2. Pipeline API
+# 2. REAL DATA INGESTION
 
-```
-POST /pipeline
-```
+NICAI uses real-world datasets for simulation.
 
-Purpose:
-Runs validation + analytics + decision pipeline.
+Datasets used:
 
-Output:
-Multi-layer response.
+clean_weather.csv  
+clean_aqi.csv  
 
----
+Weather Dataset Source:
 
-### 3. Final NICAI Evaluation API
+OpenWeather / Kaggle climate datasets.
 
-```
-POST /nicai/evaluate
-```
+Contains:
 
-Purpose:
-Produces the **final decision-ready output** used by the Mitra interface.
+timestamp  
+temperature  
+latitude  
+longitude  
 
-This endpoint is the **primary interface for system integration**.
+AQI Dataset Source:
 
----
+OpenAQ / environmental air quality monitoring datasets.
 
-# 3. How to Run the System
+Contains:
 
-Start the API server using the command:
+timestamp  
+aqi  
+pm25  
+location  
 
-```
-uvicorn main:app --reload
-```
-
-Open API documentation in browser:
-
-```
-http://127.0.0.1:8000/docs
-```
-
-From the Swagger interface, select:
-
-```
-POST /nicai/evaluate
-```
-
-Run the test cases listed below.
+These datasets simulate environmental signals with potential anomaly conditions.
 
 ---
 
-# 4. Test Cases
+# 3. DATA INGESTION FLOW
 
-The following test cases verify the complete system behavior.
+The ingestion layer performs the following steps:
 
----
+1. Load datasets from CSV files  
+2. Normalize fields into NICAI signal schema  
+3. Generate structured signals  
+4. Inject variability and anomaly patterns  
 
-# Test Case 1 — LOW Anomaly Signal
-
-Input:
+Example signal:
 
 ```json
 {
- "signal_id": "SIG100",
- "value": 30,
- "dataset_id": "DS01"
+ "signal_id": "W_2",
+ "timestamp": "2026-04-14T04:21:32",
+ "latitude": 19.0760,
+ "longitude": 72.8777,
+ "value": 48.7,
+ "dataset_id": "weather"
 }
 ```
 
-Expected Output:
-
-```
-status: ALLOW
-priority: LOW
-decision: PROCEED
-risk_level: LOW
-```
-
-Explanation:
-
-Signal value is within normal range.
-System allows the signal and proceeds without risk.
+These signals are passed to the NICAI validation layer.
 
 ---
 
-# Test Case 2 — MEDIUM Anomaly Signal
+# 4. TRACEABILITY
 
-Input:
+Each signal is assigned a deterministic trace_id during validation.
+
+Example generation logic:
+
+trace_id = SHA256(signal_id + timestamp)
+
+Trace IDs propagate through:
+
+Validation → Intelligence Analysis → Pattern Detection → Dashboard → Action Routing
+
+Example:
 
 ```json
 {
- "signal_id": "SIG200",
- "value": 75,
- "dataset_id": "DS01"
+ "signal_id": "W_2",
+ "trace_id": "0ea1438a7f5bb3795e73fa6d2519b8ef..."
 }
 ```
 
-Expected Output:
-
-```
-status: ALLOW
-priority: MEDIUM
-decision: REVIEW
-risk_level: MEDIUM
-```
-
-Explanation:
-
-Signal shows moderate anomaly.
-System flags the signal for review.
+Traceability ensures every signal can be tracked across the entire system pipeline.
 
 ---
 
-# Test Case 3 — HIGH Anomaly Signal
+# 5. MULTI-SIGNAL INTELLIGENCE
 
-Input:
+NICAI performs grouped anomaly detection.
+
+Signals are analyzed collectively using:
+
+• location clustering  
+• time window grouping  
+• anomaly frequency analysis  
+
+Example pattern output:
 
 ```json
 {
- "signal_id": "SIG300",
- "value": 95,
- "dataset_id": "DS01"
+ "pattern_id": "PATTERN_d2c00b",
+ "anomaly_count": 5,
+ "affected_zones": ["Zone_A"],
+ "pattern_type": "CLUSTER_ANOMALY",
+ "severity_trend": "INCREASING",
+ "linked_traces": ["trace1","trace2","trace3"]
 }
 ```
 
-Expected Output:
-
-```
-status: ALLOW
-priority: HIGH
-decision: ALERT
-risk_level: HIGH
-```
-
-Explanation:
-
-Signal value exceeds safe threshold.
-System generates a high-priority alert.
+This ensures anomalies are detected as patterns instead of isolated signals.
 
 ---
 
-# Test Case 4 — Dataset Not Registered
+# 6. LIVE SYSTEM FLOW
 
-Input:
+The NICAI system operates as:
+
+1. Dataset ingested and converted into signals  
+2. Signals processed through NICAI validation layer  
+3. Intelligence engine detects anomalies  
+4. Multi-signal analyzer detects patterns  
+5. Results exposed through API endpoints  
+6. Dashboard fetches signals and patterns  
+7. User triggers action via dashboard  
+8. Action payload logged with trace_id  
+
+---
+
+# 7. API ENDPOINTS
+
+NICAI exposes the following API endpoints.
+
+GET /signals
+
+Returns processed signals.
+
+Example response:
+
+```json
+[
+ {
+  "signal_id": "W_2",
+  "status": "VALID",
+  "confidence_score": 0.9,
+  "trace_id": "...",
+  "anomaly_score": 0.9,
+  "risk_level": "HIGH",
+  "anomaly_type": "TEMPERATURE_SPIKE",
+  "explanation": "Extreme temperature detected",
+  "recommendation_signal": "ESCALATE"
+ }
+]
+```
+
+GET /patterns
+
+Returns detected anomaly patterns.
+
+Example response:
 
 ```json
 {
- "signal_id": "SIG400",
- "value": 50,
- "dataset_id": "UNKNOWN"
+ "pattern_id": "PATTERN_d2c00b",
+ "anomaly_count": 5,
+ "pattern_type": "CLUSTER_ANOMALY"
 }
 ```
 
-Expected Output:
+POST /action
 
-```
-status: REJECT
-reason: dataset not registered
-```
+Logs dashboard-triggered action.
 
-Explanation:
-
-Dataset does not exist in the registry.
-Validation rejects the signal.
-
----
-
-# Test Case 5 — Inactive Dataset
-
-Input:
+Example request:
 
 ```json
 {
- "signal_id": "SIG500",
- "value": 60,
- "dataset_id": "DS02"
+ "trace_id": "...",
+ "action_type": "ESCALATE"
 }
 ```
 
-Expected Output:
-
-```
-status: FLAG
-priority: MEDIUM
-decision: REVIEW
-risk_level: MEDIUM
-```
-
-Explanation:
-
-Dataset exists but is marked inactive.
-Signal is flagged but still processed by downstream layers.
-
----
-
-# 5. Determinism Verification
-
-To verify deterministic behavior:
-
-Run the same input multiple times.
-
-Example input:
+Example response:
 
 ```json
 {
- "signal_id": "SIG300",
- "value": 95,
- "dataset_id": "DS01"
+ "status": "action logged"
 }
 ```
 
-Expected behavior:
+---
+
+# 8. DASHBOARD TEST
+
+Start dashboard server:
 
 ```
-Same input → Same output every time
+uvicorn dashboard:app --reload
 ```
 
-This confirms that the pipeline contains **no randomness**.
+Open browser:
+
+```
+http://127.0.0.1:8000
+```
+
+Dashboard displays:
+
+• Signal ID  
+• Validation Status  
+• Risk Level  
+• Anomaly Type  
+• Explanation  
+• Action Panel  
+
+Action buttons:
+
+Escalate  
+Review  
+Assign  
 
 ---
 
-# 6. Failure Handling Verification
+# 9. ACTION ROUTING
 
-The system must handle failures safely.
+NICAI does not execute actions.
 
-Scenarios tested:
+When a user clicks an action button, the system generates an action payload.
 
-Missing fields
-Invalid dataset
-Inactive dataset
+Example payload:
 
-Expected behavior:
+```json
+{
+ "trace_id": "...",
+ "action_type": "ESCALATE",
+ "target_role": "authority",
+ "timestamp": "2026-04-14T04:21:32",
+ "context": {
+   "signal_id": "W_2",
+   "anomaly_type": "TEMPERATURE_SPIKE",
+   "pattern_id": "PATTERN_d2c00b"
+ }
+}
+```
+
+The payload is stored in:
 
 ```
-System does not crash
-Proper error or validation response returned
+action_logs.json
 ```
 
 ---
 
-# 7. Expected System Guarantees
+# 10. OBSERVABILITY
 
-The NICAI pipeline guarantees the following properties:
+System observability is maintained through logs.
 
-* Deterministic signal evaluation
-* Strict validation before analytics
-* Clean separation of validation, analytics, and decision layers
-* Human-readable decision output
-* Production-safe error handling
+Primary log files:
+
+action_logs.json  
+telemetry_metrics.json  
+
+These logs capture:
+
+• action routing events  
+• pipeline execution stages  
+• system telemetry  
+
+Logs are generated during testing.
+
+---
+
+# 11. FAILURE HANDLING
+
+The system handles invalid inputs deterministically.
+
+Example invalid signal conditions:
+
+• missing timestamp  
+• invalid coordinates  
+• empty values  
+• incorrect dataset ID  
+
+Validation response example:
+
+```json
+{
+ "signal_id": "W_25",
+ "status": "REJECT",
+ "reason": "missing timestamp"
+}
+```
+
+Rejected signals do not proceed to analysis.
 
 ---
 
-# 8. Testing Outcome
+# 12. SUCCESS CRITERIA
 
-If all test cases pass successfully, the system confirms:
+The system passes testing if:
 
-* Validation layer correctness
-* Analytics engine behavior
-* Decision engine logic
-* API contract stability
-* Deterministic pipeline execution
-
-The NICAI pipeline is then considered **ready for integration into the TANTRA architecture**.
+• datasets load successfully  
+• signals process without crashes  
+• anomaly detection works correctly  
+• patterns are detected  
+• dashboard displays intelligence outputs  
+• action payloads generate correctly  
+• logs capture system activity  
 
 ---
+
+# 13. TEST READY
+
+The NICAI system is ready for evaluation under the **BHIV Universal Testing Protocol**.
+
+The system supports:
+
+• deterministic processing  
+• real dataset ingestion  
+• anomaly intelligence generation  
+• dashboard-based action routing  
+• full traceability of signals
