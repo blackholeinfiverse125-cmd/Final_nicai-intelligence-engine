@@ -10,10 +10,10 @@ import json
 def normalize_signal(signal):
     if isinstance(signal, str):
         try:
-            signal = json.loads(signal)
+            return json.loads(signal)
         except Exception:
             return None
-    return signal
+    return signal if isinstance(signal, dict) else None
 
 
 # -----------------------------
@@ -55,11 +55,10 @@ def validate_signal(signal):
         }
 
     trace_id = generate_trace_id(signal)
-
     signal_id = signal.get("signal_id")
 
     # -----------------------------
-    # 1️⃣ Check required fields
+    # 1️⃣ Required fields check
     # -----------------------------
     for field in required_fields:
         if field not in signal:
@@ -81,10 +80,10 @@ def validate_signal(signal):
     # -----------------------------
     # 2️⃣ Dataset validation
     # -----------------------------
-    dataset = get_dataset(signal.get("dataset_id"))
+    dataset_id = signal.get("dataset_id")
+    dataset = get_dataset(dataset_id)
 
-    if dataset is None:
-
+    if not dataset:
         result = {
             "signal_id": signal_id,
             "status": "REJECT",
@@ -100,7 +99,7 @@ def validate_signal(signal):
         return result
 
     # -----------------------------
-    # 3️⃣ Dataset inactive
+    # 3️⃣ Dataset inactive check
     # -----------------------------
     if dataset.get("status") != "active":
 
@@ -137,26 +136,34 @@ def validate_signal(signal):
 
 
 # -----------------------------
-# 🔥 BATCH VALIDATION
+# 🔥 BATCH VALIDATION (SAFE)
 # -----------------------------
 def validate_batch(signals):
 
     if not isinstance(signals, list):
         return {"results": []}
 
-    signals = [
-        normalize_signal(s) for s in signals
-        if normalize_signal(s) is not None
-    ]
+    # normalize safely
+    normalized = []
+    for s in signals:
+        ns = normalize_signal(s)
+        if ns:
+            normalized.append(ns)
 
-    signals = sorted(signals, key=lambda x: x.get("signal_id", ""))
+    # safe sorting
+    normalized = sorted(
+        normalized,
+        key=lambda x: x.get("signal_id", "") if isinstance(x, dict) else ""
+    )
 
     results = []
 
-    for signal in signals:
+    for signal in normalized:
+
         try:
             result = validate_signal(signal)
             results.append(result)
+
         except Exception as e:
             results.append({
                 "signal_id": signal.get("signal_id") if isinstance(signal, dict) else None,
