@@ -12,7 +12,7 @@ Testing Protocol: BHIV Universal Testing Protocol
 NICAI is a deterministic intelligence system designed to process real-world datasets and produce structured anomaly intelligence outputs.
 
 The system does NOT execute decisions.
-
+ 
 Instead, it performs intelligence analysis and routes action triggers through a dashboard interface.
 
 Pipeline:
