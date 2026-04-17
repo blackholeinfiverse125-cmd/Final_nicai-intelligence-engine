@@ -1,0 +1,60 @@
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "MEDIUM", "anomaly_score": 0.6, "anomaly_type": "TEMPERATURE_RISE", "explanation": "Temperature rising above safe threshold", "recommendation_signal": "INVESTIGATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "MEDIUM", "anomaly_score": 0.6, "anomaly_type": "TEMPERATURE_RISE", "explanation": "Temperature rising above safe threshold", "recommendation_signal": "INVESTIGATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "HIGH", "anomaly_score": 0.9, "anomaly_type": "TEMPERATURE_SPIKE", "explanation": "Extreme temperature detected", "recommendation_signal": "ESCALATE"}
+{"risk_level": "MEDIUM", "anomaly_score": 0.6, "anomaly_type": "TEMPERATURE_RISE", "explanation": "Temperature rising above safe threshold", "recommendation_signal": "INVESTIGATE"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
+{"risk_level": "LOW", "anomaly_score": 0.2, "anomaly_type": "NORMAL", "explanation": "Everything normal", "recommendation_signal": "MONITOR"}
