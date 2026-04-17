@@ -1,9 +1,9 @@
 # NICAI TESTING PACKET
 
-Project: NICAI Intelligence System  
-Developer: Ankita Prajapati  
-Testing Authority: Vinayak Tiwari  
-Testing Protocol: BHIV Universal Testing Protocol  
+Project: NICAI Intelligence System
+Developer: Ankita Prajapati
+Testing Authority: Vinayak Tiwari
+Testing Protocol: BHIV Universal Testing Protocol
 
 ---
 
@@ -27,8 +27,8 @@ NICAI uses real-world datasets for simulation.
 
 Datasets used:
 
-clean_weather.csv  
-clean_aqi.csv  
+clean_weather.csv
+clean_aqi.csv
 
 Weather Dataset Source:
 
@@ -36,10 +36,10 @@ OpenWeather / Kaggle climate datasets.
 
 Contains:
 
-timestamp  
-temperature  
-latitude  
-longitude  
+timestamp
+temperature
+latitude
+longitude
 
 AQI Dataset Source:
 
@@ -47,23 +47,23 @@ OpenAQ / environmental air quality monitoring datasets.
 
 Contains:
 
-timestamp  
-aqi  
-pm25  
-location  
+timestamp
+aqi
+pm25
+location
 
-These datasets simulate environmental signals with potential anomaly conditions.
+These datasets simulate environmental signals with anomaly conditions.
 
 ---
 
 # 3. DATA INGESTION FLOW
 
-The ingestion layer performs the following steps:
+The ingestion layer performs:
 
-1. Load datasets from CSV files  
-2. Normalize fields into NICAI signal schema  
-3. Generate structured signals  
-4. Inject variability and anomaly patterns  
+1. Load datasets from CSV files
+2. Normalize fields into NICAI signal schema
+3. Generate structured signals
+4. Inject variability and anomalies
 
 Example signal:
 
@@ -78,21 +78,19 @@ Example signal:
 }
 ```
 
-These signals are passed to the NICAI validation layer.
-
 ---
 
 # 4. TRACEABILITY
 
-Each signal is assigned a deterministic trace_id during validation.
+Each signal is assigned a deterministic trace_id.
 
-Example generation logic:
+Generation logic:
 
 trace_id = SHA256(signal_id + timestamp)
 
-Trace IDs propagate through:
+Trace flow:
 
-Validation → Intelligence Analysis → Pattern Detection → Dashboard → Action Routing
+Validation → Analysis → Pattern Detection → Dashboard → Action Logs
 
 Example:
 
@@ -103,106 +101,102 @@ Example:
 }
 ```
 
-Traceability ensures every signal can be tracked across the entire system pipeline.
-
 ---
 
 # 5. MULTI-SIGNAL INTELLIGENCE
 
-NICAI performs grouped anomaly detection.
+NICAI performs grouped anomaly detection using:
 
-Signals are analyzed collectively using:
-
-• location clustering  
-• time window grouping  
-• anomaly frequency analysis  
+• location clustering
+• anomaly frequency
+• zone-based grouping
 
 Example pattern output:
 
 ```json
 {
- "pattern_id": "PATTERN_d2c00b",
+ "pattern_id": "PATTERN_xxxx",
  "anomaly_count": 5,
  "affected_zones": ["Zone_A"],
  "pattern_type": "CLUSTER_ANOMALY",
  "severity_trend": "INCREASING",
- "linked_traces": ["trace1","trace2","trace3"]
+ "linked_traces": ["trace1","trace2"]
 }
 ```
-
-This ensures anomalies are detected as patterns instead of isolated signals.
 
 ---
 
 # 6. LIVE SYSTEM FLOW
 
-The NICAI system operates as:
-
-1. Dataset ingested and converted into signals  
-2. Signals processed through NICAI validation layer  
-3. Intelligence engine detects anomalies  
-4. Multi-signal analyzer detects patterns  
-5. Results exposed through API endpoints  
-6. Dashboard fetches signals and patterns  
-7. User triggers action via dashboard  
-8. Action payload logged with trace_id  
+1. Dataset → Signals
+2. Signals → Validation
+3. Validation → Intelligence Analysis
+4. Analysis → Pattern Detection
+5. Output → API
+6. API → Dashboard
+7. User → Action Trigger
+8. Action → Logs
 
 ---
 
 # 7. API ENDPOINTS
 
-NICAI exposes the following API endpoints.
-
-GET /signals
+### GET /signals
 
 Returns processed signals.
 
-Example response:
+Example:
 
 ```json
 [
  {
   "signal_id": "W_2",
   "status": "VALID",
-  "confidence_score": 0.9,
-  "trace_id": "...",
-  "anomaly_score": 0.9,
   "risk_level": "HIGH",
   "anomaly_type": "TEMPERATURE_SPIKE",
-  "explanation": "Extreme temperature detected",
-  "recommendation_signal": "ESCALATE"
+  "trace_id": "..."
  }
 ]
 ```
 
-GET /patterns
+---
 
-Returns detected anomaly patterns.
+### GET /patterns
 
-Example response:
+Returns multi-signal pattern output.
 
 ```json
 {
- "pattern_id": "PATTERN_d2c00b",
+ "pattern_id": "PATTERN_xxxx",
  "anomaly_count": 5,
- "pattern_type": "CLUSTER_ANOMALY"
+ "affected_zones": ["Zone_A"],
+ "pattern_type": "CLUSTER_ANOMALY",
+ "severity_trend": "INCREASING",
+ "linked_traces": ["..."]
 }
 ```
 
-POST /action
+---
 
-Logs dashboard-triggered action.
+### POST /action
 
-Example request:
+Logs action from dashboard.
+
+Request:
 
 ```json
 {
  "trace_id": "...",
- "action_type": "ESCALATE"
+ "action_type": "ESCALATE",
+ "context": {
+   "signal_id": "W_2",
+   "risk_level": "HIGH",
+   "anomaly_type": "TEMPERATURE_SPIKE"
+ }
 }
 ```
 
-Example response:
+Response:
 
 ```json
 {
@@ -214,40 +208,61 @@ Example response:
 
 # 8. DASHBOARD TEST
 
-Start dashboard server:
+Run:
 
 ```
 uvicorn dashboard:app --reload
 ```
 
-Open browser:
+Open:
 
 ```
 http://127.0.0.1:8000
 ```
 
-Dashboard displays:
+Dashboard shows:
 
-• Signal ID  
-• Validation Status  
-• Risk Level  
-• Anomaly Type  
-• Explanation  
-• Action Panel  
-
-Action buttons:
-
-Escalate  
-Review  
-Assign  
+• Signal ID
+• Zone
+• Status
+• Risk Level
+• Anomaly Type
+• Explanation
+• Action Panel
 
 ---
 
-# 9. ACTION ROUTING
+# 9. API TESTING
 
-NICAI does not execute actions.
+Test endpoints:
 
-When a user clicks an action button, the system generates an action payload.
+```
+http://127.0.0.1:8000/signals
+http://127.0.0.1:8000/patterns
+```
+
+---
+
+# 10. ACTION TESTING
+
+Steps:
+
+1. Click any action button
+2. Open file:
+
+```
+action_logs.json
+```
+
+3. Verify:
+
+• trace_id matches signal
+• action_type correct
+• context present
+
+---
+
+# 11. ACTION ROUTING
 
 Example payload:
 
@@ -256,54 +271,47 @@ Example payload:
  "trace_id": "...",
  "action_type": "ESCALATE",
  "target_role": "authority",
- "timestamp": "2026-04-14T04:21:32",
+ "timestamp": "...",
  "context": {
    "signal_id": "W_2",
-   "anomaly_type": "TEMPERATURE_SPIKE",
-   "pattern_id": "PATTERN_d2c00b"
+   "risk_level": "HIGH",
+   "anomaly_type": "TEMPERATURE_SPIKE"
  }
 }
 ```
 
-The payload is stored in:
+---
+
+# 12. OBSERVABILITY
+
+Logs generated:
 
 ```
+validation_logs.json
+anomaly_logs.json
+pattern_logs.json
 action_logs.json
 ```
 
----
+These track:
 
-# 10. OBSERVABILITY
-
-System observability is maintained through logs.
-
-Primary log files:
-
-action_logs.json  
-telemetry_metrics.json  
-
-These logs capture:
-
-• action routing events  
-• pipeline execution stages  
-• system telemetry  
-
-Logs are generated during testing.
+• validation events
+• anomaly detection
+• pattern detection
+• user actions
 
 ---
 
-# 11. FAILURE HANDLING
+# 13. FAILURE HANDLING
 
-The system handles invalid inputs deterministically.
+Invalid cases:
 
-Example invalid signal conditions:
+• missing timestamp
+• invalid data
+• null values
+• invalid dataset
 
-• missing timestamp  
-• invalid coordinates  
-• empty values  
-• incorrect dataset ID  
-
-Validation response example:
+Example:
 
 ```json
 {
@@ -313,32 +321,32 @@ Validation response example:
 }
 ```
 
-Rejected signals do not proceed to analysis.
+Rejected signals stop processing.
 
 ---
 
-# 12. SUCCESS CRITERIA
+# 14. SUCCESS CRITERIA
 
-The system passes testing if:
+System passes if:
 
-• datasets load successfully  
-• signals process without crashes  
-• anomaly detection works correctly  
-• patterns are detected  
-• dashboard displays intelligence outputs  
-• action payloads generate correctly  
-• logs capture system activity  
+• data loads successfully
+• no crashes
+• anomalies detected
+• patterns generated
+• dashboard works
+• actions logged
+• logs verifiable
 
 ---
 
-# 13. TEST READY
+# 15. TEST READY
 
-The NICAI system is ready for evaluation under the **BHIV Universal Testing Protocol**.
+NICAI is ready for BHIV testing.
 
-The system supports:
+Supports:
 
-• deterministic processing  
-• real dataset ingestion  
-• anomaly intelligence generation  
-• dashboard-based action routing  
-• full traceability of signals
+• deterministic processing
+• real data ingestion
+• anomaly intelligence
+• dashboard actions
+• traceability
