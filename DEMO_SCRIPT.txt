@@ -1,8 +1,17 @@
-STEP 1 — Load raw data
-STEP 2 — Convert to signals
-STEP 3 — Validate signals
-STEP 4 — Run anomaly detection
-STEP 5 — Show dashboard
-STEP 6 — Click action button
-STEP 7 — Open logs/action_logs.json
-STEP 8 — Show trace_id continuity
+Step 1 – Run demo
+python run_demo_full.py
+
+Step 2 – Open dashboard
+http://127.0.0.1:8000/dashboard
+
+Step 3 – Observe signals
+
+Step 4 – Observe anomaly detection
+
+Step 5 – Observe pattern detection
+
+Step 6 – Click action button
+
+Step 7 – Check logs/action_logs.json
+
+Step 8 – Verify trace_id continuity
