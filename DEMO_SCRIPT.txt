@@ -1,17 +1,118 @@
-Step 1 – Run demo
+NICAI DEMO SCRIPT (FINAL — 2–3 MIN)
+
+---
+
+## INTRO (5–7 sec)
+
+"NICAI is a deterministic intelligence system that processes real-world data and generates traceable intelligence outputs without taking decisions."
+
+---
+
+## STEP 1 — RAW DATA (10 sec)
+
+Show:
+
+* clean_weather.csv
+* clean_aqi.csv
+
+
+"System starts with real environmental datasets containing weather and air quality signals."
+
+---
+
+## STEP 2 — RUN SYSTEM (15 sec)
+
+Run:
 python run_demo_full.py
 
-Step 2 – Open dashboard
-http://127.0.0.1:8000/dashboard
+Show:
 
-Step 3 – Observe signals
+* Total signals count
 
-Step 4 – Observe anomaly detection
 
-Step 5 – Observe pattern detection
+"These datasets are converted into standardized signals and passed into the NICAI pipeline."
 
-Step 6 – Click action button
+---
 
-Step 7 – Check logs/action_logs.json
+## STEP 3 — VALIDATION + ANALYSIS (20 sec)
 
-Step 8 – Verify trace_id continuity
+Show console:
+
+* LOW / MEDIUM / HIGH counts
+
+
+"Each signal goes through strict validation and deterministic anomaly detection."
+
+---
+
+## STEP 4 — PATTERN DETECTION (15 sec)
+
+Show:
+
+* PATTERN output
+
+
+"System also performs multi-signal analysis to detect patterns across regions."
+
+---
+
+## STEP 5 — DASHBOARD (20 sec)
+
+Open browser:
+http://127.0.0.1:8000
+
+Show:
+
+* Signals table
+* Risk levels
+* Action buttons
+
+
+"Dashboard provides real-time visibility of validated signals and detected anomalies."
+
+---
+
+## STEP 6 — TRIGGER ACTION (15 sec)
+
+Click any button:
+
+* eligible_for_escalation
+* requires_review
+* monitor
+
+
+"NICAI does not take decisions. It only generates structured action signals."
+
+---
+
+## STEP 7 — VERIFY LOG (15 sec)
+
+Open:
+logs/action_logs.json
+
+Show:
+
+* trace_id
+* action_type
+* timestamp
+
+
+"All actions are logged with full traceability."
+
+---
+
+## STEP 8 — TRACE CONTINUITY (10 sec)
+
+Match:
+
+* trace_id in dashboard
+* trace_id in logs
+
+
+"The same trace_id flows across validation, analysis, and action logging."
+
+---
+
+## CLOSING (5 sec)
+
+"NICAI ensures deterministic processing, full traceability, and safe intelligence-driven workflows."
