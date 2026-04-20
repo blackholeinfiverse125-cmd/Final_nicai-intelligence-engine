@@ -271,3 +271,125 @@ def analyze_patterns(outputs):
 
     except Exception as e:
         return error_response(str(e))
+    
+
+
+class SanskarEngine:
+
+    def __init__(self):
+        pass
+
+    def process(self, signals):
+        processed = self.preprocess(signals)
+
+        anomaly = self.detect_anomaly(processed)
+        temporal = self.analyze_temporal(processed)
+        spatial = self.analyze_spatial(processed)
+        risk = self.calculate_risk(processed, anomaly, temporal)
+        confidence = self.calculate_confidence(processed)
+        explanation = self.generate_explanation(processed, anomaly, temporal, spatial)
+
+        return {
+            "risk_level": risk,
+            "anomaly_type": anomaly,
+            "temporal_context": temporal,
+            "spatial_context": spatial,
+            "confidence": confidence,
+            "explanation": explanation,
+            "recommendation_signal": anomaly
+        }
+
+    def preprocess(self, signals):
+        return {
+            k: float(v) if isinstance(v, (int, float)) else v
+            for k, v in signals.items()
+        }
+    def detect_anomaly(self, signals):
+
+        pollution = signals.get("pollution", 0)
+        temp = signals.get("temperature", 0)
+
+        if pollution >= 300:
+            return "severe_pollution"
+
+        elif pollution >= 200:
+            return "high_pollution"
+
+    # ✅ check combined BEFORE moderate
+        elif temp >= 35 and pollution >= 150:
+            return "environmental_instability"
+
+        elif pollution >= 150:
+            return "moderate_pollution"
+
+        return "normal"
+    
+
+    def analyze_temporal(self, signals):
+
+        trend = signals.get("trend", 0)
+
+        if trend > 0.7:
+            return "RISING"
+        elif trend < 0.3:
+            return "FALLING"
+        else:
+            return "STABLE"
+
+    def analyze_spatial(self, signals):
+
+        zone = signals.get("zone", ["unknown"])
+
+        if isinstance(zone, list) and len(zone) > 1:
+            return "CLUSTERED"
+        elif isinstance(zone, list):
+            return zone[0]
+        else:
+            return "UNKNOWN"
+
+    def calculate_risk(self, signals, anomaly, temporal):
+
+        if anomaly in ["severe_pollution"]:
+            return "HIGH"
+
+        if anomaly in ["high_pollution", "environmental_instability"]:
+            return "HIGH" if temporal == "RISING" else "MEDIUM"
+
+        if anomaly in ["moderate_pollution"]:
+            return "MEDIUM"
+
+        return "LOW"
+
+    def calculate_confidence(self, signals):
+
+        pollution = signals.get("pollution", 0)
+        temp = signals.get("temperature", 0)
+
+        if pollution >= 200 or (pollution >= 150 and temp >= 35):
+            return "HIGH"
+
+        elif pollution >= 150:
+            return "MEDIUM"
+
+        else:
+            return "LOW"
+
+    def generate_explanation(self, signals, anomaly, temporal, spatial):
+
+        pollution = signals.get("pollution", 0)
+        temp = signals.get("temperature", 0)
+
+        reasons = []
+
+        if pollution >= 150:
+            reasons.append("high pollution levels")
+
+        if temp >= 35:
+            reasons.append("elevated temperature")
+
+        if reasons:
+            reason_text = " and ".join(reasons)
+        else:
+            reason_text = "normal conditions"
+
+        return f"{anomaly} detected in {spatial} with {temporal} trend due to {reason_text}."
