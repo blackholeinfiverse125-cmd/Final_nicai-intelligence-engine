@@ -2,7 +2,7 @@
 
 NICAI is a **deterministic intelligence system** that transforms real-world environmental data into structured anomaly insights, pattern detection, and traceable action signals.
 
-It acts as an **intelligence layer between raw data and governance systems**.
+It acts as an **intelligence layer between raw data and downstream governance systems**.
 
 ---
 
@@ -13,12 +13,12 @@ NICAI processes datasets such as weather and AQI to:
 - Validate incoming signals
 - Detect anomalies using rule-based logic
 - Identify multi-signal patterns
-- Provide structured recommendations
+- Generate structured recommendation signals
 - Enable dashboard-based interaction
 - Maintain full traceability using `trace_id`
 
 ⚠️ NICAI does NOT take decisions  
-It only generates **intelligence outputs and action recommendations**
+It ONLY generates **intelligence outputs and recommendation signals**
 
 ---
 
@@ -27,10 +27,11 @@ It only generates **intelligence outputs and action recommendations**
 - ✅ Deterministic processing (no randomness)
 - ✅ Multi-signal pattern detection
 - ✅ Full traceability (`trace_id`)
-- ✅ Fail-safe system (no crashes)
+- ✅ Failure-safe system (no crashes)
 - ✅ Dashboard visualization
 - ✅ Structured logging system
 - ✅ TANTRA-aligned outputs
+- ✅ Action routing (simulation only)
 
 ---
 
@@ -55,7 +56,9 @@ FastAPI Layer
    ↓
 Dashboard Interface
    ↓
-Action Logging
+Action Routing (Simulation)
+   ↓
+Logging System
 ```
 
 ---
@@ -65,14 +68,15 @@ Action Logging
 ```
 nicai_system/
 
-main.py                  # API layer
-validator.py             # validation logic
-sanskar_engine.py        # anomaly + pattern detection
+main.py
+validator.py
+sanskar_engine.py
 samachar_input_adapter.py
-dashboard.py             # UI dashboard
-error_handler.py         # failure-safe handling
+dashboard.py
+action_router.py
+error_handler.py
 
-run_demo_full.py         # single entry demo
+run_demo_full.py
 
 logs/
 data/
@@ -84,22 +88,19 @@ README.md
 
 ---
 
-# ▶️ How to Run (Single Command Demo)
+# ▶️ How to Run
 
-Run full system:
-
+### Run Full Demo
 ```
 python run_demo_full.py
 ```
 
-Start API:
-
+### Run API Manually
 ```
 uvicorn main:app --reload
 ```
 
-Open dashboard:
-
+### Open Dashboard
 ```
 http://127.0.0.1:8000/dashboard
 ```
@@ -128,10 +129,10 @@ File: `validator.py`
 
 Responsibilities:
 
-- schema validation
-- missing field detection
-- dataset verification
-- trace_id generation
+- schema validation  
+- missing field detection  
+- dataset verification  
+- trace_id generation  
 
 Output:
 
@@ -151,7 +152,7 @@ Output:
 
 File: `sanskar_engine.py`
 
-Performs deterministic anomaly detection:
+Deterministic anomaly detection:
 
 | Condition | Risk |
 |----------|------|
@@ -159,14 +160,15 @@ Performs deterministic anomaly detection:
 | Elevated | MEDIUM |
 | Extreme  | HIGH |
 
-Output:
+### Output Contract
 
 ```json
 {
   "risk_level": "HIGH",
-  "anomaly_score": 0.9,
   "anomaly_type": "TEMPERATURE_SPIKE",
   "explanation": "Extreme temperature detected",
+  "confidence": 0.9,
+  "temporal_context": "current_window",
   "recommendation_signal": "eligible_for_escalation"
 }
 ```
@@ -175,13 +177,13 @@ Output:
 
 # 📈 Pattern Detection
 
-Also handled in `sanskar_engine.py`
+Handled in `sanskar_engine.py`
 
 Detects:
 
-- repeated anomalies
-- clustered anomalies
-- affected zones
+- repeated anomalies  
+- clustered anomalies  
+- affected zones  
 
 Example:
 
@@ -189,7 +191,7 @@ Example:
 {
   "pattern_id": "PATTERN_xxx",
   "anomaly_count": 3,
-  "affected_zones": ["Zone_A"],
+  "affected_zones": ["North"],
   "pattern_type": "REPEATED_ANOMALY",
   "severity_trend": "STABLE"
 }
@@ -207,13 +209,9 @@ Allowed outputs:
 - `requires_review`
 - `monitor`
 
-❌ Removed:
-- ESCALATE  
-- REVIEW  
-
 ---
 
-# 🛡 Failure Handling (Critical)
+# 🛡 Failure Handling
 
 Handled via `error_handler.py`
 
@@ -230,8 +228,8 @@ All errors return:
 System guarantees:
 
 - no crashes  
-- no undefined behavior  
-- safe execution  
+- safe fallback  
+- controlled execution  
 
 ---
 
@@ -239,9 +237,9 @@ System guarantees:
 
 Before processing:
 
-- checks input format
-- ensures required fields
-- blocks invalid data early
+- validates input type  
+- checks required fields  
+- blocks invalid data  
 
 Invalid input → immediate structured error
 
@@ -253,10 +251,12 @@ File: `dashboard.py`
 
 Features:
 
-- signal table
-- anomaly insights
-- action buttons
-- pattern summary
+- signal table  
+- risk levels  
+- anomaly insights  
+- action buttons  
+- pattern summary  
+- trace_id visibility  
 
 Fail-safe mode:
 
@@ -271,17 +271,17 @@ No data / invalid input
 | Endpoint | Method | Description |
 |----------|--------|------------|
 | `/validate` | POST | Validate signal |
-| `/pipeline` | POST | Run validation + analysis |
-| `/nicai/evaluate` | POST | Final intelligence output |
+| `/pipeline` | POST | Validation + analysis |
+| `/nicai/evaluate` | POST | Final intelligence |
 | `/run` | GET | Batch processing |
 | `/dashboard` | GET | UI dashboard |
-| `/action` | POST | Log action |
+| `/action` | POST | Action logging |
 
 ---
 
 # 📊 Logging System
 
-All logs stored in:
+Logs stored in:
 
 ```
 logs/
@@ -319,38 +319,22 @@ Signal → Validation → Analysis → Pattern → Dashboard → Action Log
 
 ---
 
-# 🎯 Demo Flow (2–3 Minutes)
-
-1. Show dataset  
-2. Convert to signals  
-3. Run validation  
-4. Show anomaly detection  
-5. Show pattern detection  
-6. Open dashboard  
-7. Trigger action  
-8. Show logs + trace_id  
-
----
-
 # 🔒 Deterministic Guarantee
 
 ```
 Same Input → Same Output
 ```
 
-- rule-based logic  
-- fixed thresholds  
-- SHA-based trace_id  
-
 ---
 
 # 📌 Final Status
 
-- ✅ Fully integrated system  
+- ✅ Integrated  
 - ✅ Crash-free  
-- ✅ Demo-ready  
 - ✅ Failure-safe  
 - ✅ Deterministic  
+- ✅ Traceable  
+- ✅ Demo-ready  
 - ✅ TANTRA-aligned  
 
 ---
@@ -358,7 +342,7 @@ Same Input → Same Output
 # 👩‍💻 Developer
 
 **Ankita Prajapati**  
-NICAI – System Integration & Stabilization
+NICAI – System Integration & Stabilization  
 
 ---
 
@@ -369,7 +353,7 @@ NICAI is a **stable, deterministic intelligence system** that:
 - processes real-world data  
 - detects anomalies  
 - identifies patterns  
-- provides structured recommendations  
+- generates structured recommendation signals  
 - ensures full traceability  
 
-It is now **demo-ready and production-grade (controlled environments)**.
+Ready for **demo and controlled deployment**.
