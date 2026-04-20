@@ -36,18 +36,7 @@ data/clean_aqi.csv
 ```
 
 ### Weather Dataset
-Fields:
-```
-timestamp, temperature, latitude, longitude
-```
-
 ### AQI Dataset
-Fields:
-```
-timestamp, aqi, pm25, location
-```
-
-These datasets simulate environmental anomaly scenarios.
 
 ---
 
