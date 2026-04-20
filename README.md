@@ -70,7 +70,6 @@ validator.py             # validation logic
 sanskar_engine.py        # anomaly + pattern detection
 samachar_input_adapter.py
 dashboard.py             # UI dashboard
-action_router.py
 error_handler.py         # failure-safe handling
 
 run_demo_full.py         # single entry demo
