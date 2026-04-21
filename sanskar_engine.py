@@ -272,7 +272,7 @@ def analyze_patterns(outputs):
     except Exception as e:
         return error_response(str(e))
     
-
+#applyed the multi-signal log
 
 class SanskarEngine:
 
