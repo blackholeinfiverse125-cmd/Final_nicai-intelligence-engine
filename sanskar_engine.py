@@ -1,4 +1,4 @@
-import json
+'''import json
 import hashlib
 from datetime import datetime, timezone
 from collections import defaultdict
@@ -22,13 +22,13 @@ def detect_zone(lat, lon):
             return "South"
 
     except:
-        return "Unknown"
+        return "Unknown" '''
 
 
 # =========================================================
 # 🔹 SINGLE SIGNAL ANALYSIS
 # =========================================================
-def analyze_signal(signal):
+'''def analyze_signal(signal):
 
     try:
         if not isinstance(signal, dict):
@@ -124,12 +124,12 @@ def analyze_signal(signal):
             "anomaly_type": anomaly_type,
             "explanation": explanation,
             "recommendation_signal": recommendation
-        }
+        }'''
 
         # -----------------------------
         # LOGGING
         # -----------------------------
-        try:
+''' try:
             log_entry = {
                 "trace_id": signal.get("trace_id"),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -146,13 +146,14 @@ def analyze_signal(signal):
         return output
 
     except Exception as e:
-        return error_response(str(e))
+        return error_response(str(e))'''
+
 
 
 # =========================================================
 # 🔹 MULTI-SIGNAL ANALYSIS (🔥 FIXED SAFE VERSION)
 # =========================================================
-def analyze_patterns(outputs):
+'''def analyze_patterns(outputs):
 
     try:
         if not isinstance(outputs, list):
@@ -270,7 +271,7 @@ def analyze_patterns(outputs):
         return pattern_output
 
     except Exception as e:
-        return error_response(str(e))
+        return error_response(str(e))'''
     
 #applyed the multi-signal log
 
@@ -289,16 +290,23 @@ class SanskarEngine:
         confidence = self.calculate_confidence(processed)
         explanation = self.generate_explanation(processed, anomaly, temporal, spatial)
 
+    # ✅ TANTRA compliant recommendation
+        if risk == "HIGH":
+            recommendation = "eligible_for_escalation"
+        elif risk == "MEDIUM":
+            recommendation = "requires_review"
+        else:
+            recommendation = "monitor"
+
         return {
             "risk_level": risk,
-            "anomaly_type": anomaly,
-            "temporal_context": temporal,
-            "spatial_context": spatial,
-            "confidence": confidence,
-            "explanation": explanation,
-            "recommendation_signal": anomaly
-        }
-
+        "anomaly_type": anomaly,
+        "temporal_context": temporal,
+        "spatial_context": spatial,
+        "confidence_score": confidence,   # ✅ FIXED
+        "explanation": explanation,
+        "recommendation_signal": recommendation   # ✅ FIXED
+    }
     def preprocess(self, signals):
         return {
             k: float(v) if isinstance(v, (int, float)) else v
@@ -309,17 +317,21 @@ class SanskarEngine:
         pollution = signals.get("pollution", 0)
         temp = signals.get("temperature", 0)
 
+    # 🔥 Multi-signal FIRST (priority logic)
+        if pollution >= 300 and temp >= 35:
+            return "severe_environmental_risk"
+
+        if pollution >= 200 and temp >= 30:
+            return "high_pollution_with_heat"
+
+    # 🔽 Then single-signal logic
         if pollution >= 300:
             return "severe_pollution"
 
-        elif pollution >= 200:
+        if pollution >= 200:
             return "high_pollution"
 
-    # ✅ check combined BEFORE moderate
-        elif temp >= 35 and pollution >= 150:
-            return "environmental_instability"
-
-        elif pollution >= 150:
+        if pollution >= 150:
             return "moderate_pollution"
 
         return "normal"
@@ -342,54 +354,79 @@ class SanskarEngine:
 
         if isinstance(zone, list) and len(zone) > 1:
             return "CLUSTERED"
-        elif isinstance(zone, list):
+
+        if isinstance(zone, list):
             return zone[0]
-        else:
-            return "UNKNOWN"
+
+        return "UNKNOWN"
 
     def calculate_risk(self, signals, anomaly, temporal):
 
-        if anomaly in ["severe_pollution"]:
-            return "HIGH"
+        if anomaly in ["severe_environmental_risk", "severe_pollution", "high_pollution_with_heat"]:
+            base = "HIGH"
+        elif anomaly == "high_pollution":
+            base = "MEDIUM"
+        elif anomaly == "moderate_pollution":
+            base = "MEDIUM"
+        else:
+            base = "LOW"
 
-        if anomaly in ["high_pollution", "environmental_instability"]:
-            return "HIGH" if temporal == "RISING" else "MEDIUM"
+    # 🔥 FIXED LOGIC
+        if temporal == "RISING":
+            if base == "MEDIUM":
+                return "HIGH"
 
-        if anomaly in ["moderate_pollution"]:
-            return "MEDIUM"
+        elif temporal == "FALLING":
+            if base == "HIGH":
+                return "MEDIUM"
+            if base == "MEDIUM":
+                return "LOW"
 
-        return "LOW"
+        return base
+     #✅ new function level
 
     def calculate_confidence(self, signals):
 
         pollution = signals.get("pollution", 0)
         temp = signals.get("temperature", 0)
+        trend = signals.get("trend", 0)
 
-        if pollution >= 200 or (pollution >= 150 and temp >= 35):
-            return "HIGH"
+        if pollution >= 300 and temp >= 35:
+            return 0.95
 
-        elif pollution >= 150:
-            return "MEDIUM"
+        if pollution >= 200:
+            return 0.9 if trend > 0.5 else 0.85
 
-        else:
-            return "LOW"
+        if pollution >= 150:
+            return 0.75
 
-    def generate_explanation(self, signals, anomaly, temporal, spatial):
+        return 0.6
+
+    def generate_explanation(self, signals, anomaly, temporal, spatial):    
 
         pollution = signals.get("pollution", 0)
         temp = signals.get("temperature", 0)
 
         reasons = []
 
+    # core factors
         if pollution >= 150:
             reasons.append("high pollution levels")
 
         if temp >= 35:
             reasons.append("elevated temperature")
 
-        if reasons:
-            reason_text = " and ".join(reasons)
-        else:
-            reason_text = "normal conditions"
+    # 🔥 temporal reasoning
+        if temporal == "RISING":
+            reasons.append("increasing trend")
 
+        elif temporal == "FALLING":
+            reasons.append("decreasing trend")
+
+    # 🔥 spatial reasoning
+        if spatial == "CLUSTERED":
+            reasons.append("multi-zone impact")
+
+        reason_text = " and ".join(reasons) if reasons else "normal conditions"
+    
         return f"{anomaly} detected in {spatial} with {temporal} trend due to {reason_text}."

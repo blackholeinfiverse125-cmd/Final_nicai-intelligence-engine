@@ -89,7 +89,9 @@ def run_demo():
 
             # VALIDATION
             validation = validate_signal(signal)
-
+            if validation is None:
+                continue
+            
             if validation.get("status") == "ERROR":
                 continue
 

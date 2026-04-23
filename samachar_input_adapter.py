@@ -1,16 +1,15 @@
 import pandas as pd
-import random
 
 
 # -----------------------------
-# 1️⃣ LOAD DATA
+# 1️ LOAD DATA
 # -----------------------------
 def load_data():
     try:
-        weather = pd.read_csv("data/clean_weather.csv")
-        aqi = pd.read_csv("data/clean_aqi.csv")
+        weather = pd.read_csv("clean_weather.csv")
+        aqi = pd.read_csv("clean_aqi.csv")
 
-        print("✅ Data Loaded Successfully")
+        print(" Data Loaded Successfully")
         return weather, aqi
 
     except Exception as e:
@@ -19,86 +18,35 @@ def load_data():
 
 
 # -----------------------------
-# HELPER: SAFE LAT/LON
-# -----------------------------
-def get_safe_location(row):
-
-    lat = row.get("latitude")
-    lon = row.get("longitude")
-
-    # Fix missing / invalid values
-    if pd.isna(lat) or lat == 0:
-        lat = random.uniform(10, 30)
-
-    if pd.isna(lon) or lon == 0:
-        lon = random.uniform(60, 90)
-
-    return float(lat), float(lon)
-
-
-# -----------------------------
-# 2️⃣ CONVERT TO NICAI SIGNALS
+# 2️ CONVERT TO NICAI SIGNALS
 # -----------------------------
 def convert_to_signals(weather, aqi):
 
     signals = []
 
-    # -----------------------------
-    # WEATHER SIGNALS
-    # -----------------------------
-    for i, row in weather.iterrows():
+    min_len = min(len(weather), len(aqi))
 
-        if pd.isna(row.get("temperature")):
+    for i in range(min_len):
+
+        w = weather.iloc[i]
+        a = aqi.iloc[i]
+
+        if pd.isna(w.get("temperature")) or pd.isna(a.get("aqi")):
             continue
 
-        lat, lon = get_safe_location(row)
-
-        value = float(row["temperature"])
-
-        # Inject variability (important for demo)
-        if value > 40:
-            value += random.uniform(5, 15)  # spike
-        elif value < 10:
-            value -= random.uniform(2, 5)   # drop
-
         signals.append({
-            "signal_id": f"W_{i}",
-            "timestamp": str(row.get("date", "")),
-            "latitude": lat,
-            "longitude": lon,
-            "feature_type": "temperature",
-            "value": value,
-            "dataset_id": "DS_WEATHER"
+            "signal_id": f"S_{i}",
+            "timestamp": str(w.get("date", "2024-01-01T10:00:00")),
+
+            # Correct NICAI structure
+            "value": {
+                "temperature": float(w["temperature"]),
+                "aqi": float(a["aqi"])
+            },
+
+            "location": w.get("city", "unknown")
         })
 
-    # -----------------------------
-    # AQI SIGNALS
-    # -----------------------------
-    for i, row in aqi.iterrows():
-
-        if pd.isna(row.get("aqi")):
-            continue
-
-        lat, lon = get_safe_location(row)
-
-        value = float(row["aqi"])
-
-        # Inject variability
-        if value > 200:
-            value += random.uniform(20, 50)  # high pollution spike
-        elif value < 50:
-            value += random.uniform(10, 30)  # mild variation
-
-        signals.append({
-            "signal_id": f"A_{i}",
-            "timestamp": str(row.get("date", "")),
-            "latitude": lat,
-            "longitude": lon,
-            "feature_type": "aqi",
-            "value": value,
-            "dataset_id": "DS_AQI"
-        })
-
-    print(f"✅ Total Signals Created: {len(signals)}")
+    print(f" Combined Signals Created: {len(signals)}")
 
     return signals

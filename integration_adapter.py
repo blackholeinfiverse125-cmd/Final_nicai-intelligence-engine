@@ -3,11 +3,13 @@ from sanskar_engine import SanskarEngine
 engine = SanskarEngine()
 
 def map_input(data):
+    value = data.get("value") or {}
+
     return {
-        "temperature": float(data.get("temperature", data.get("temp", 0))),
-        "pollution": float(data.get("aqi", data.get("aqi_value", 0))),
+        "temperature": float(value.get("temperature", 0)),   # no fallback
+        "pollution": float(value.get("aqi", 0)),             # exact mapping
         "trend": float(data.get("trend", 0.5)),
-        "zone": [data.get("city", data.get("location", "unknown"))]
+        "zone": [data.get("location", "unknown")]
     }
 
 def run_engine(data):
